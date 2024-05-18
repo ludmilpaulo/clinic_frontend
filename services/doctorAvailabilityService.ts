@@ -5,6 +5,7 @@ const API_BASE_URL = baseAPI;
 
 export const createDoctorAvailability = async (availabilityData: any, token: string) => {
   try {
+    console.log('Sending availability data:', availabilityData); 
     const response = await axios.post(`${API_BASE_URL}/manager/doctor-availability/`, availabilityData, {
       headers: {
         'Authorization': `Token ${token}`

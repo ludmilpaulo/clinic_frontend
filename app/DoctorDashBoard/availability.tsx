@@ -13,10 +13,9 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
   const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
   const [startTime, setStartTime] = useState<string>('');
   const [endTime, setEndTime] = useState<string>('');
-  const [consultationCategory, setConsultationCategory] = useState<number | null>(null);
+  const [consultationCategory, setConsultationCategory] = useState<string>('');
   const [recurringMonthly, setRecurringMonthly] = useState<boolean>(false);
   const [categories, setCategories] = useState<{ id: number, name: string }[]>([]);
-  const [newCategory, setNewCategory] = useState<string>('');
 
   const user = useSelector((state: RootState) => selectUser(state));
   const token = user?.token;
@@ -38,31 +37,35 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
     );
   };
 
-  const handleAddCategory = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      if (token && newCategory) {
-        const addedCategory = await createConsultationCategory(newCategory, token);
-        setCategories(prevCategories => [...prevCategories, addedCategory]);
-        setNewCategory('');
-        alert('Category added successfully!');
-      }
-    } catch (error) {
-      console.error('Error adding category:', error);
-      alert('Error adding category.');
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let categoryId = categories.find(category => category.name === consultationCategory)?.id;
+
+    if (!categoryId) {
+      try {
+        if (token) {
+          const addedCategory = await createConsultationCategory(consultationCategory, token);
+          setCategories(prevCategories => [...prevCategories, addedCategory]);
+          categoryId = addedCategory.id;
+        }
+      } catch (error) {
+        console.error('Error adding category:', error);
+        alert('Error adding category.');
+        return;
+      }
+    }
+
     const availabilityData = {
-      doctor: userId,
-      consultation_category: consultationCategory,
-      days_of_week: daysOfWeek.join(','),
+      user_id: user?.user_id,
+      consultation_category: categoryId,
+      days_of_week: daysOfWeek,
       start_time: startTime,
       end_time: endTime,
       recurring_monthly: recurringMonthly,
     };
+
+    console.log('Submitting availability data:', availabilityData);
+
     try {
       if (token) {
         await createDoctorAvailability(availabilityData, token);
@@ -70,7 +73,7 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
       }
     } catch (error) {
       console.error('Error saving availability:', error);
-      alert('Error saving availability.');
+      alert(`Error saving availability: ${error.response.data}`);
     }
   };
 
@@ -115,37 +118,19 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-bold mb-2">Consultation Category</label>
-          <div className="relative">
-            <select
-              onChange={(e) => setConsultationCategory(Number(e.target.value))}
-              className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-            >
-              <option value="" disabled selected>Select category</option>
-              {categories.map(category => (
-                <option key={category.id} value={category.id}>{category.name}</option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.59 7.41L10 11.83l4.41-4.42L16 8l-6 6-6-6z"/></svg>
-            </div>
-          </div>
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-bold mb-2">Add New Category</label>
-          <form onSubmit={handleAddCategory} className="flex items-center space-x-2">
-            <input
-              type="text"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-            <button
-              type="submit"
-              className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
-            >
-              Add
-            </button>
-          </form>
+          <input
+            type="text"
+            list="consultationCategories"
+            value={consultationCategory}
+            onChange={(e) => setConsultationCategory(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded"
+            placeholder="Type to add or select category"
+          />
+          <datalist id="consultationCategories">
+            {categories.map(category => (
+              <option key={category.id} value={category.name} />
+            ))}
+          </datalist>
         </div>
         <div className="mb-4">
           <label className="flex items-center space-x-2">
@@ -170,3 +155,4 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
 };
 
 export default Availability;
+

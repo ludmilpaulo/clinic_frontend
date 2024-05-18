@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { RootState, store } from '@/redux/store'; // Adjust the import based on your store's location
 import { baseAPI } from '@/utils/variables';
 
 const API_BASE_URL = baseAPI; // Replace with your backend URL

@@ -17,3 +17,18 @@ export const getConsultationCategories = async (token: string) => {
     throw error;
   }
 };
+
+export const createConsultationCategory = async (categoryName: string, token: string) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/account/consultation-categories/`, { name: categoryName }, {
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error creating consultation category:', error);
+    throw error;
+  }
+};
+
