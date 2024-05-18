@@ -7,9 +7,6 @@ import { baseAPI } from '@/utils/variables';
 import dayjs from 'dayjs';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Modal from 'react-modal';
-
-Modal.setAppElement('#root'); // Set the app element to the root of your application
 
 interface ConsultationProps {
   userId: number | null;
@@ -54,6 +51,7 @@ const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
         }
       })
       .then(response => {
+        console.log("druga", response.data)
         setDrugs(response.data);
       })
       .catch(error => {
@@ -132,54 +130,58 @@ const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
         </div>
       </div>
 
-      <Modal
-        isOpen={!!selectedConsultation}
-        onRequestClose={() => setSelectedConsultation(null)}
-        contentLabel="Prescription Form"
-        ariaHideApp={false}
-        className="modal"
-        overlayClassName="modal-overlay"
-      >
-        {selectedConsultation && (
-          <div>
-            <h2 className="text-xl font-bold mb-4">Create Prescription for {selectedConsultation.patient_name}</h2>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Drugs</label>
-              {drugs.map(drug => (
-                <div key={drug.id} className="flex items-center mb-2">
-                  <input
-                    type="checkbox"
-                    id={`drug-${drug.id}`}
-                    className="mr-2"
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setPrescriptionDrugs([...prescriptionDrugs, { ...drug, quantity: 1 }]);
-                      } else {
-                        setPrescriptionDrugs(prescriptionDrugs.filter(d => d.id !== drug.id));
-                      }
-                    }}
-                  />
-                  <label htmlFor={`drug-${drug.id}`} className="text-sm text-gray-600">{drug.name}</label>
-                </div>
-              ))}
+      {selectedConsultation && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+            <div className="bg-white p-6">
+              <h2 className="text-xl font-bold mb-4">Create Prescription for {selectedConsultation.patient_name}</h2>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Medication</label>
+                {drugs.map(drug => (
+                  <div key={drug.id} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id={`drug-${drug.id}`}
+                      className="mr-2"
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setPrescriptionDrugs([...prescriptionDrugs, { ...drug, quantity: 1 }]);
+                        } else {
+                          setPrescriptionDrugs(prescriptionDrugs.filter(d => d.id !== drug.id));
+                        }
+                      }}
+                    />
+                    <label htmlFor={`drug-${drug.id}`} className="text-sm text-gray-600">{drug.name}</label>
+                  </div>
+                ))}
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Notes</label>
+                <textarea
+                  className="border border-gray-300 rounded p-2 w-full"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
+              </div>
+              <button
+                className="bg-blue-500 text-white p-2 rounded"
+                onClick={handlePrescriptionSubmit}
+              >
+                Submit Prescription
+              </button>
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Notes</label>
-              <textarea
-                className="border border-gray-300 rounded p-2 w-full"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <button
+                type="button"
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                onClick={() => setSelectedConsultation(null)}
+              >
+                Cancel
+              </button>
             </div>
-            <button
-              className="bg-blue-500 text-white p-2 rounded"
-              onClick={handlePrescriptionSubmit}
-            >
-              Submit Prescription
-            </button>
           </div>
-        )}
-      </Modal>
+        </div>
+      )}
     </div>
   );
 };

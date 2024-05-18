@@ -1,3 +1,5 @@
+"use client";
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
@@ -38,14 +40,22 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
     if (token) {
       getConsultationCategories(token).then(response => {
         setCategories(response);
-      }).catch(error => {
-        console.error('Error fetching categories:', error);
+      }).catch((error: unknown) => {
+        if (axios.isAxiosError(error)) {
+          console.error('Error fetching categories:', error.response?.data);
+        } else {
+          console.error('Error fetching categories:', error);
+        }
       });
 
       getDoctorAvailabilities(token).then(response => {
         setAvailabilities(response);
-      }).catch(error => {
-        console.error('Error fetching availabilities:', error);
+      }).catch((error: unknown) => {
+        if (axios.isAxiosError(error)) {
+          console.error('Error fetching availabilities:', error.response?.data);
+        } else {
+          console.error('Error fetching availabilities:', error);
+        }
       });
     }
   }, [token]);
@@ -124,7 +134,7 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
       end_time: endTime,
       year: year || null,
       month: month || null,
-      recurring_monthly: recurring_monthly,
+      recurring_monthly: recurringMonthly,
     };
 
     console.log('Submitting availability data:', availabilityData);
@@ -143,8 +153,13 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
         alert('Availability saved successfully!');
       }
     } catch (error) {
-      console.error('Error saving availability:', error);
-      alert(`Error saving availability: ${error.response?.data || error.message}`);
+      if (axios.isAxiosError(error)) {
+        console.error('Error saving availability:', error.response?.data);
+        alert(`Error saving availability: ${error.response?.data || error.message}`);
+      } else {
+        console.error('Error saving availability:', error);
+        alert(`Error saving availability: `);
+      }
     }
   };
 
@@ -201,7 +216,12 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
               <p>End: {availability.end_time}</p>
             </div>
             <div className="flex space-x-2 mt-auto">
-            
+              <button
+                onClick={() => handleEdit(availability)}
+                className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-700 transition duration-200"
+              >
+                Edit
+              </button>
               <button
                 onClick={() => handleDelete(availability.id)}
                 className="bg-red-500 text-white p-2 rounded hover:bg-red-700 transition duration-200"
@@ -229,7 +249,7 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
                         onChange={() => handleDayChange(day)}
                         className="form-checkbox h-5 w-5 text-blue-600"
                       />
-                      <span>{['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][parseInt(day)]}</span>
+                      <span>{['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][parseInt(day)]}</span>
                     </label>
                   ))}
                 </div>

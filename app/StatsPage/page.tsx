@@ -37,24 +37,8 @@ const StatsPage = () => {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl mb-4">Doctor Appointment Stats</h1>
-            <select
-                className="border p-2 mb-4"
-                onChange={(e) => setSelectedDoctor(e.target.value)}
-            >
-                <option value="">Select a Doctor</option>
-                {doctors.map((doctor) => (
-                    <option key={doctor.id} value={doctor.id}>{doctor.name}</option>
-                ))}
-            </select>
-            {stats && (
-                <div>
-                    <p>Daily: {stats.daily}</p>
-                    <p>Weekly: {stats.weekly}</p>
-                    <p>Monthly: {stats.monthly}</p>
-                    <p>Yearly: {stats.yearly}</p>
-                </div>
-            )}
+           
+         
         </div>
     );
 };

@@ -39,24 +39,7 @@ const ManagementStatsPage = () => {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl mb-4">Management Stats</h1>
-            <select
-                className="border p-2 mb-4"
-                onChange={(e) => setSelectedDoctor(e.target.value)}
-            >
-                <option value="">Select a Doctor</option>
-                {doctors.map((doctor) => (
-                    <option key={doctor.id} value={doctor.id}>{doctor.name}</option>
-                ))}
-            </select>
-            {stats && (
-                <div>
-                    <p>Daily: {stats.daily.count} appointments, Revenue: ${stats.daily.revenue.toFixed(2)}</p>
-                    <p>Weekly: {stats.weekly.count} appointments, Revenue: ${stats.weekly.revenue.toFixed(2)}</p>
-                    <p>Monthly: {stats.monthly.count} appointments, Revenue: ${stats.monthly.revenue.toFixed(2)}</p>
-                    <p>Yearly: {stats.yearly.count} appointments, Revenue: ${stats.yearly.revenue.toFixed(2)}</p>
-                </div>
-            )}
+          
         </div>
     );
 };

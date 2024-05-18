@@ -6,8 +6,10 @@ import { selectUser } from '@/redux/slices/authSlice';
 import axios from 'axios';
 import { baseAPI } from '@/utils/variables';
 import { getConsultationCategories } from '@/services/consultationCategoryService';
+import { DoctorAvailability, Slot, ConsultationCategory, Appointment } from '@/utils/types';
 
-const daysOfWeekMap = {
+
+const daysOfWeekMap: { [key: string]: string } = {
   '0': 'Sunday',
   '1': 'Monday',
   '2': 'Tuesday',
@@ -17,11 +19,11 @@ const daysOfWeekMap = {
   '6': 'Saturday',
 };
 
-const Appointments = () => {
+const Appointments: React.FC = () => {
   const [category, setCategory] = useState<string>('');
-  const [availabilities, setAvailabilities] = useState<any[]>([]);
-  const [selectedSlot, setSelectedSlot] = useState<any | null>(null);
-  const [categories, setCategories] = useState<{ id: number, name: string }[]>([]);
+  const [availabilities, setAvailabilities] = useState<DoctorAvailability[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<Slot & { availability_id: number; doctor_user_id: number } | null>(null);
+  const [categories, setCategories] = useState<ConsultationCategory[]>([]);
   const user = useSelector((state: RootState) => selectUser(state));
   const token = user?.token;
 
@@ -29,8 +31,12 @@ const Appointments = () => {
     if (token) {
       getConsultationCategories(token).then(response => {
         setCategories(response);
-      }).catch(error => {
-        console.error('Error fetching categories:', error);
+      }).catch((error: unknown) => {
+        if (axios.isAxiosError(error)) {
+          console.error('Error fetching categories:', error.response?.data);
+        } else {
+          console.error('Error fetching categories:', error);
+        }
       });
     }
   }, [token]);
@@ -38,14 +44,14 @@ const Appointments = () => {
   useEffect(() => {
     if (category && token) {
       console.log(`Fetching availabilities for category: ${category}`);
-      axios.get(`${baseAPI}/appointment/doctor-availability/${category}/`, {
+      axios.get<DoctorAvailability[]>(`${baseAPI}/appointment/doctor-availability/${category}/`, {
         headers: {
           'Authorization': `Token ${token}`
         }
       })
       .then(response => {
         console.log('Availabilities fetched:', response.data);
-        const updatedAvailabilities = response.data.map(availability => {
+        const updatedAvailabilities = response.data.map((availability: DoctorAvailability) => {
           return {
             ...availability,
             slots: generateSlots(availability).map(slot => ({
@@ -56,14 +62,18 @@ const Appointments = () => {
         });
         setAvailabilities(updatedAvailabilities);
       })
-      .catch(error => {
-        console.error('Error fetching availabilities:', error);
+      .catch((error: unknown) => {
+        if (axios.isAxiosError(error)) {
+          console.error('Error fetching availabilities:', error.response?.data);
+        } else {
+          console.error('Error fetching availabilities:', error);
+        }
       });
     }
   }, [category, token]);
 
-  const generateSlots = (availability) => {
-    const slots = [];
+  const generateSlots = (availability: DoctorAvailability): Date[] => {
+    const slots: Date[] = [];
     const startTime = new Date(`${availability.year}-${String(availability.month).padStart(2, '0')}-${String(availability.day_of_month).padStart(2, '0')}T${availability.start_time}`);
     const endTime = new Date(`${availability.year}-${String(availability.month).padStart(2, '0')}-${String(availability.day_of_month).padStart(2, '0')}T${availability.end_time}`);
     const currentTime = new Date(startTime);
@@ -78,8 +88,8 @@ const Appointments = () => {
 
   const handleBooking = async () => {
     if (selectedSlot && token) {
-      const appointmentData = {
-        patient: user?.user_id,
+      const appointmentData: Appointment = {
+        patient: user?.user_id!,
         doctor: selectedSlot.doctor_user_id,
         category: parseInt(category),
         appointment_time: selectedSlot.time.toISOString(),
@@ -108,9 +118,13 @@ const Appointments = () => {
           } : avail
         ));
         setSelectedSlot(null);
-      } catch (error) {
-        console.error('Error booking appointment:', error.response?.data || error.message);
-        alert('An appointment with this doctor at this time already exists.');
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          console.error('Error booking appointment:', error.response?.data);
+          alert('An appointment with this doctor at this time already exists.');
+        } else {
+          console.error('Error booking appointment:', error);
+        }
       }
     }
   };
@@ -135,7 +149,7 @@ const Appointments = () => {
         <h2>Available Slots</h2>
         {availabilities.length > 0 ? (
           availabilities.map((availability) => {
-            const days = availability.days_of_week ? availability.days_of_week.split(',').map(day => daysOfWeekMap[day.trim()]).join(', ') : '';
+            const days = availability.days_of_week ? availability.days_of_week.split(',').map(day => daysOfWeekMap[day.trim() as keyof typeof daysOfWeekMap]).join(', ') : '';
             return (
               <div key={availability.id} className="mt-4">
                 <h3 className="text-lg font-semibold">{availability.doctor_name} {availability.doctor_surname} available on {days} {availability.day_of_month ? `and day ${availability.day_of_month}` : ''} in {availability.month}/{availability.year}</h3>
@@ -143,7 +157,7 @@ const Appointments = () => {
                   {availability.slots.map((slot, index) => (
                     <button
                       key={index}
-                      onClick={() => setSelectedSlot({ availability_id: availability.id, doctor_user_id: availability.doctor_user_id, time: slot.time })}
+                      onClick={() => setSelectedSlot({ availability_id: availability.id, doctor_user_id: availability.doctor_user_id, time: slot.time, booked: slot.booked })}
                       className={`p-2 rounded ${slot.booked ? 'bg-red-500' : selectedSlot?.availability_id === availability.id && selectedSlot?.time.getTime() === slot.time.getTime() ? 'bg-green-500' : 'bg-gray-300'}`}
                       disabled={slot.booked}
                     >
