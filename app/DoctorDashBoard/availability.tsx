@@ -13,9 +13,17 @@ interface AvailabilityProps {
 }
 
 const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1; // JavaScript months are 0-based
+  const currentDay = new Date().getDate();
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
+  const [dayOfMonth, setDayOfMonth] = useState<number | ''>(currentDay);
   const [startTime, setStartTime] = useState<string>('');
   const [endTime, setEndTime] = useState<string>('');
+  const [year, setYear] = useState<number>(currentYear);
+  const [month, setMonth] = useState<number>(currentMonth);
   const [consultationCategory, setConsultationCategory] = useState<string>('');
   const [recurringMonthly, setRecurringMonthly] = useState<boolean>(false);
   const [categories, setCategories] = useState<{ id: number, name: string }[]>([]);
@@ -43,16 +51,25 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
   }, [token]);
 
   const handleDayChange = (day: string) => {
+    setDayOfMonth(''); // Clear day of the month if selecting days of the week
     setDaysOfWeek(prevDays => 
       prevDays.includes(day) ? prevDays.filter(d => d !== day) : [...prevDays, day]
     );
   };
 
+  const handleDayOfMonthChange = (day: number) => {
+    setDaysOfWeek([]); // Clear days of the week if selecting day of the month
+    setDayOfMonth(day);
+  };
+
   const handleEdit = (availability: any) => {
     setEditingAvailability(availability);
-    setDaysOfWeek(availability.days_of_week.map(String));
+    setDaysOfWeek(availability.days_of_week ? availability.days_of_week.split(',').map(String) : []);
+    setDayOfMonth(availability.day_of_month || '');
     setStartTime(availability.start_time);
     setEndTime(availability.end_time);
+    setYear(availability.year || currentYear);
+    setMonth(availability.month || currentMonth);
     setConsultationCategory(categories.find(category => category.id === availability.consultation_category)?.name || '');
     setRecurringMonthly(availability.recurring_monthly);
     setShowForm(true);
@@ -69,6 +86,15 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
         alert('Error deleting availability.');
       }
     }
+  };
+
+  const handleCalendarClick = (date: Date) => {
+    setSelectedDate(date);
+    setDayOfMonth(date.getDate());
+    setYear(date.getFullYear());
+    setMonth(date.getMonth() + 1); // JavaScript months are 0-based
+    setDaysOfWeek([date.getDay().toString()]);
+    setShowForm(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,10 +118,13 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
     const availabilityData = {
       user_id: user?.user_id,
       consultation_category: categoryId,
-      days_of_week: daysOfWeek,
+      days_of_week: daysOfWeek.length > 0 ? daysOfWeek : null,
+      day_of_month: dayOfMonth || null,
       start_time: startTime,
       end_time: endTime,
-      recurring_monthly: recurringMonthly,
+      year: year || null,
+      month: month || null,
+      recurring_monthly: recurring_monthly,
     };
 
     console.log('Submitting availability data:', availabilityData);
@@ -122,7 +151,7 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
   const tileClassName = ({ date, view }: { date: Date; view: string }) => {
     if (view === 'month') {
       const day = date.getDay().toString();
-      const availability = availabilities.find(avail => avail.days_of_week.includes(day));
+      const availability = availabilities.find(avail => avail.days_of_week?.includes(day) || avail.day_of_month === date.getDate());
       if (availability) {
         return 'bg-green-200';
       }
@@ -132,15 +161,16 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
 
   return (
     <div className="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-4">Doctor's Availability</h1>
+      <h1 className="text-2xl font-bold mb-4">Doctor&apos;s Availability</h1>
       <div className="calendar-container mb-6">
         <Calendar
           className="w-full"
           tileClassName={tileClassName}
+          onClickDay={handleCalendarClick}
           tileContent={({ date, view }) => {
             if (view === 'month') {
               const day = date.getDay().toString();
-              const availability = availabilities.find(avail => avail.days_of_week.includes(day));
+              const availability = availabilities.find(avail => avail.days_of_week?.includes(day) || avail.day_of_month === date.getDate());
               if (availability) {
                 return (
                   <div className="text-center text-black bg-green-400 rounded p-1">
@@ -158,25 +188,30 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
       >
         Add Availability
       </button>
-      {availabilities.map(availability => (
-        <div key={availability.id} className="mt-4 flex justify-between items-center">
-         
-          <div>
-            <button
-              onClick={() => handleEdit(availability)}
-              className="bg-green-500 text-white p-2 rounded hover:bg-green-700 transition duration-200"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => handleDelete(availability.id)}
-              className="ml-2 bg-red-500 text-white p-2 rounded hover:bg-red-700 transition duration-200"
-            >
-              Delete
-            </button>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+        {availabilities.map(availability => (
+          <div key={availability.id} className="bg-gray-100 p-4 rounded-lg shadow-md flex flex-col items-start">
+            <div className="text-lg font-semibold mb-2">
+              {availability.year && <span>{availability.year}</span>}
+              {availability.month && <span>/{availability.month}</span>}
+              {availability.day_of_month && <span>/{availability.day_of_month}</span>}
+            </div>
+            <div className="text-sm mb-4">
+              <p>Start: {availability.start_time}</p>
+              <p>End: {availability.end_time}</p>
+            </div>
+            <div className="flex space-x-2 mt-auto">
+            
+              <button
+                onClick={() => handleDelete(availability.id)}
+                className="bg-red-500 text-white p-2 rounded hover:bg-red-700 transition duration-200"
+              >
+                Delete
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       {showForm && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-lg">
@@ -200,6 +235,18 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
                 </div>
               </div>
               <div className="mb-4">
+                <label className="block text-sm font-bold mb-2">Day of the Month</label>
+                <select
+                  value={dayOfMonth}
+                  onChange={(e) => handleDayOfMonthChange(Number(e.target.value))}
+                  className="w-full p-2 border border-gray-300 rounded"
+                >
+                  {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                    <option key={day} value={day}>{day}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Start Time</label>
                 <input
                   type="time"
@@ -216,6 +263,30 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
                   onChange={(e) => setEndTime(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-bold mb-2">Year</label>
+                <select
+                  value={year}
+                  onChange={(e) => setYear(Number(e.target.value))}
+                  className="w-full p-2 border border-gray-300 rounded"
+                >
+                  {Array.from({ length: 10 }, (_, i) => currentYear + i).map(y => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-bold mb-2">Month</label>
+                <select
+                  value={month}
+                  onChange={(e) => setMonth(Number(e.target.value))}
+                  className="w-full p-2 border border-gray-300 rounded"
+                >
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Consultation Category</label>
