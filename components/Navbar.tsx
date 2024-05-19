@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
                 <FaEnvelope className="mr-1" /> Contact
               </span>
             </Link>
-            <Link href="/profile">
+            <Link href="/ProfilePage">
               <span className="text-gray-800 hover:text-gray-600 flex items-center cursor-pointer">
                 <FaUser className="mr-1" /> Profile
               </span>

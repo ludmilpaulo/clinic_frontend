@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import { FaCreditCard, FaTruck, FaLock, FaMoneyBillAlt, FaBank } from 'react-icons/fa';
-import { selectCartItems, clearCart } from '@/redux/slices/basketSlice'; // Ensure correct import path
+import { FaCreditCard, FaTruck, FaLock, FaMoneyBillAlt, FaBan } from 'react-icons/fa';
+import { selectCartItems, clearCart, updateBasket, decreaseBasket, removeFromBasket } from '@/redux/slices/basketSlice'; // Ensure correct import path
 
 const CheckoutPage: React.FC = () => {
   const cartItems = useSelector(selectCartItems);
@@ -157,7 +157,7 @@ const CheckoutPage: React.FC = () => {
                   className="mr-2"
                 />
                 <label htmlFor="eft" className="flex items-center">
-                  <FaBank className="mr-2" /> EFT
+                  <FaBan className="mr-2" /> EFT
                 </label>
               </div>
             </div>
@@ -234,6 +234,27 @@ const CheckoutPage: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold">{item.name}</h3>
                     <p className="text-gray-600">{item.quantity} x {item.price} Kz</p>
+                    <div className="flex items-center space-x-2 mt-2">
+                      <button 
+                        onClick={() => dispatch(decreaseBasket(item.id))} 
+                        className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 transition-colors duration-300"
+                      >
+                        -
+                      </button>
+                      <span>{item.quantity}</span>
+                      <button 
+                        onClick={() => dispatch(updateBasket(item))} 
+                        className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 transition-colors duration-300"
+                      >
+                        +
+                      </button>
+                      <button 
+                        onClick={() => dispatch(removeFromBasket(item.id))} 
+                        className="text-red-500 hover:text-red-700 transition-colors duration-300 ml-2"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
                   <p className="text-lg font-semibold">{(item.price * item.quantity).toFixed(2)} Kz</p>
                 </div>
