@@ -95,10 +95,13 @@ export interface User {
   export interface Drug {
     id: number;
     name: string;
-    description?: string;
     price: number;
     quantity_available: number;
+    image_urls: string[];
+    description: string;
+    quantity?: number; // A
   }
+  
   
   export interface Prescription {
     id: number;
