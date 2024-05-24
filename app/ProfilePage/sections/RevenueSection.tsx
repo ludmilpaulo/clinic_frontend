@@ -19,7 +19,7 @@ const RevenueSection: React.FC = () => {
       const response = await axios.get('/api/customers/revenue/');
       setRevenueData(response.data);
       setLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       setError(error.message);
       setLoading(false);
     }

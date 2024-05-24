@@ -6,7 +6,7 @@ import { FaCheck, FaTimes } from 'react-icons/fa';
 const OrdersSection: React.FC = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<any | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -18,7 +18,7 @@ const OrdersSection: React.FC = () => {
       const response = await axios.get('/api/orders/');
       setOrders(response.data);
       setLoading(false);
-    } catch (error) {
+    } catch (error : any) {
       setError(error.message);
       setLoading(false);
     }
@@ -29,7 +29,7 @@ const OrdersSection: React.FC = () => {
     try {
       await axios.put(`/api/orders/${order.id}/`, { ...order, status });
       fetchOrders();
-    } catch (error) {
+    } catch (error: any) {
       setError(error.message);
     } finally {
       setLoading(false);

@@ -99,7 +99,8 @@ export interface User {
     quantity_available: number;
     image_urls: string[];
     description: string;
-    quantity?: number; // A
+    category_name: string;
+    quantity?: number; // Optional property for quantity
   }
   
   

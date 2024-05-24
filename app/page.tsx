@@ -12,6 +12,7 @@ const HomePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     axios.get(`${baseAPI}/pharmacy/pharmacy/drugs/`)
@@ -37,9 +38,15 @@ const HomePage = () => {
     setSelectedCategory(category);
   };
 
-  const filteredDrugs = selectedCategory === 'All' 
-    ? drugs 
-    : drugs.filter(drug => drug.category_name === selectedCategory);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredDrugs = drugs.filter(drug => {
+    const matchesCategory = selectedCategory === 'All' || drug.category_name === selectedCategory;
+    const matchesSearchQuery = drug.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearchQuery;
+  });
 
   return (
     <div className="container mx-auto p-4 pt-48">
@@ -64,17 +71,28 @@ const HomePage = () => {
       {!loading && (
         <>
           {error && <div className="text-red-500 mb-4">Error: {error}</div>}
-          <div className="mb-4">
-            <label className="font-semibold text-lg mr-2">Filter by Category:</label>
-            <select 
-              value={selectedCategory} 
-              onChange={(e) => handleCategoryChange(e.target.value)} 
-              className="border rounded px-4 py-2"
-            >
-              {categories.map((category, index) => (
-                <option key={index} value={category}>{category}</option>
-              ))}
-            </select>
+          <div className="mb-4 flex justify-between items-center">
+            <div>
+              <label className="font-semibold text-lg mr-2">Filter by Category:</label>
+              <select 
+                value={selectedCategory} 
+                onChange={(e) => handleCategoryChange(e.target.value)} 
+                className="border rounded px-4 py-2"
+              >
+                {categories.map((category, index) => (
+                  <option key={index} value={category}>{category}</option>
+                ))}
+              </select>
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="border rounded py-1 px-3"
+                placeholder="Search..."
+              />
+            </div>
           </div>
           <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredDrugs.map((drug: Drug) => (

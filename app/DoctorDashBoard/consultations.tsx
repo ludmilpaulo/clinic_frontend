@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { selectUser } from '@/redux/slices/authSlice';
@@ -22,7 +22,7 @@ const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
   const user = useSelector((state: RootState) => selectUser(state));
   const token = user?.token;
 
-  const fetchConsultations = (appointmentTime: Date | null) => {
+  const fetchConsultations = useCallback((appointmentTime: Date | null) => {
     let url = `${baseAPI}/pharmacy/appointments/${userId}`;
     if (appointmentTime) {
       url += `?appointment_time=${appointmentTime.toISOString()}`;
@@ -41,9 +41,9 @@ const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
         console.error('Error fetching consultations:', error);
       });
     }
-  };
+  }, [token, userId]);
 
-  const fetchDrugs = () => {
+  const fetchDrugs = useCallback(() => {
     if (token) {
       axios.get(`${baseAPI}/pharmacy/drugs/`, {
         headers: {
@@ -51,14 +51,13 @@ const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
         }
       })
       .then(response => {
-        console.log("druga", response.data)
         setDrugs(response.data);
       })
       .catch(error => {
         console.error('Error fetching drugs:', error);
       });
     }
-  };
+  }, [token]);
 
   const handlePrescriptionSubmit = () => {
     if (token && selectedConsultation) {
@@ -92,11 +91,11 @@ const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
 
   useEffect(() => {
     fetchConsultations(selectedTime);
-  }, [token, userId, selectedTime]);
+  }, [token, userId, selectedTime, fetchConsultations]);
 
   useEffect(() => {
     fetchDrugs();
-  }, [token]);
+  }, [token, fetchDrugs]);
 
   return (
     <div className="container mx-auto p-4">

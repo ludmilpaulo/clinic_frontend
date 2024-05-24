@@ -41,10 +41,10 @@ const ContactPage: React.FC = () => {
     <div className="container mx-auto p-6">
       <div className="bg-white shadow-lg rounded-lg p-6">
         <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
-        <p className="text-gray-700 mb-6">Have any questions or feedback? We'd love to hear from you!</p>
+        <p className="text-gray-700 mb-6">Have any questions or feedback? We&apos;d love to hear from you!</p>
         
         {success && <p className="text-green-500 mb-4">Thank you for contacting us. We will get back to you soon.</p>}
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {error && <p className="text-red-500 mb-4">{'Something went wrong. Please try again.'}</p>}
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

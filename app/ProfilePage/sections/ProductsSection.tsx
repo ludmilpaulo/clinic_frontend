@@ -14,7 +14,7 @@ const ProductsSection: React.FC = () => {
   });
   const [selectedDrug, setSelectedDrug] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<any | null>(null);
 
   useEffect(() => {
     fetchDrugs();
@@ -26,7 +26,7 @@ const ProductsSection: React.FC = () => {
       const response = await axios.get('/api/drugs/');
       setDrugs(response.data);
       setLoading(false);
-    } catch (error) {
+    } catch (error :any) {
       setError(error.message);
       setLoading(false);
     }
@@ -52,7 +52,7 @@ const ProductsSection: React.FC = () => {
       fetchDrugs();
       setForm({ name: '', category: '', description: '', price: '', quantity_available: '' });
       setSelectedDrug(null);
-    } catch (error) {
+    } catch (error: any) {
       setError(error.message);
     } finally {
       setLoading(false);
@@ -75,7 +75,7 @@ const ProductsSection: React.FC = () => {
     try {
       await axios.delete(`/api/drugs/${id}/`);
       fetchDrugs();
-    } catch (error) {
+    } catch (error : any) {
       setError(error.message);
     } finally {
       setLoading(false);

@@ -105,7 +105,7 @@ const AboutPage: React.FC = () => {
                   <h2 className="text-2xl font-bold mb-2">Testimonials</h2>
                   {data.testimonials.map((testimonial: any) => (
                     <div key={testimonial.author} className="mb-4">
-                      <p className="text-gray-700 italic">"{testimonial.content}"</p>
+                      <p className="text-gray-700 italic">{"&quot;" + testimonial.content + "&quot;"}</p>
                       <p className="text-gray-900 font-semibold">- {testimonial.author}</p>
                     </div>
                   ))}

@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Drug } from '@/utils/types';
 import { useDispatch, useSelector } from "react-redux";
 import { updateBasket, selectCartItems, decreaseBasket } from '@/redux/slices/basketSlice'; // Update the import path as needed
@@ -16,6 +15,8 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
   const cartItems = useSelector(selectCartItems);
   const currentImageIndex = 0; // Assuming you handle image index somehow
 
+  const [inCart, setInCart] = useState(false);
+
   const handleAdd = (drug: Drug) => {
     dispatch(updateBasket(drug));
   };
@@ -24,14 +25,14 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
     dispatch(decreaseBasket(drugId));
   };
 
-  const howManyInCart = (drug: Drug) => {
-    const item = cartItems.find((item) => item.id === drug.id);
-    return item ? item.quantity : 0;
-  };
+  useEffect(() => {
+    if (drug) {
+      const item = cartItems.find((item) => item.id === drug.id);
+      setInCart(item ? (item.quantity ?? 0) > 0 : false);
+    }
+  }, [cartItems, drug]);
 
-  const inCart = howManyInCart(drug) > 0;
-
-  if (drug.quantity_available <= 0) return null; // Don't display if quantity is less than or equal to 0
+  if (!drug || drug.quantity_available <= 0) return null; // Don't display if drug is undefined or quantity is less than or equal to 0
 
   return (
     <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-4">
@@ -75,7 +76,7 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
             >
               -
             </button>
-            <span className="text-lg">{howManyInCart(drug)}</span>
+            <span className="text-lg">{cartItems.find((item) => item.id === drug.id)?.quantity ?? 0}</span>
             <button
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors duration-300"
               onClick={() => handleAdd(drug)}

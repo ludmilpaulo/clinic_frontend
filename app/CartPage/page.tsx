@@ -5,17 +5,18 @@ import { FaTrashAlt } from 'react-icons/fa';
 import Image from 'next/image';
 import { selectCartItems, updateBasket, decreaseBasket, removeFromBasket, clearCart } from '@/redux/slices/basketSlice'; // Update the import path as needed
 import { useRouter } from 'next/navigation';
+import { Drug } from '@/utils/types'; // Import the Drug interface
 
 const CartPage: React.FC = () => {
   const cartItems = useSelector(selectCartItems);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const handleIncrease = (item) => {
-    dispatch(updateBasket({ ...item, quantity: item.quantity + 1 }));
+  const handleIncrease = (item: Drug) => {
+    dispatch(updateBasket({ ...item, quantity: item.quantity ? item.quantity + 1 : 1 }));
   };
 
-  const handleDecrease = (item) => {
+  const handleDecrease = (item: Drug) => {
     dispatch(decreaseBasket(item.id));
   };
 
@@ -31,7 +32,7 @@ const CartPage: React.FC = () => {
     router.push('/CheckoutPage'); // Redirect to the checkout page
   };
 
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * (item.quantity || 1), 0);
 
   return (
     <div className="container mx-auto p-6">
@@ -86,7 +87,7 @@ const CartPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <p className="text-lg font-semibold">{(item.price * item.quantity).toFixed(2)} Kz</p>
+                  <p className="text-lg font-semibold">{(item.price * (item.quantity || 1)).toFixed(2)} Kz</p>
                   <button 
                     onClick={() => handleRemove(item.id)} 
                     className="text-red-500 hover:text-red-700 transition-colors duration-300"

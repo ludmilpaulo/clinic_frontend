@@ -28,8 +28,8 @@ const CustomersSection: React.FC = () => {
       const response = await axios.get('/api/customers/');
       setCustomers(response.data);
       setLoading(false);
-    } catch (error) {
-      setError(error.message);
+    } catch (err: any) {
+      setError(err.message);
       setLoading(false);
     }
   };
@@ -54,8 +54,8 @@ const CustomersSection: React.FC = () => {
       fetchCustomers();
       setForm({ name: '', surname: '', phone_number: '', id_number_or_passport: '', gender: '', date_of_birth: '', address: '' });
       setSelectedCustomer(null);
-    } catch (error) {
-      setError(error.message);
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -79,8 +79,8 @@ const CustomersSection: React.FC = () => {
     try {
       await axios.delete(`/api/customers/${id}/`);
       fetchCustomers();
-    } catch (error) {
-      setError(error.message);
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }

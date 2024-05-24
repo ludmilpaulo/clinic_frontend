@@ -41,7 +41,7 @@ const CheckoutPage: React.FC = () => {
     router.push('/thank-you');
   };
 
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * (item.quantity ?? 1), 0);
 
   return (
     <div className="container mx-auto p-6">
@@ -233,7 +233,7 @@ const CheckoutPage: React.FC = () => {
                 <div key={item.id} className="flex justify-between items-center mb-4">
                   <div>
                     <h3 className="text-lg font-semibold">{item.name}</h3>
-                    <p className="text-gray-600">{item.quantity} x {item.price} Kz</p>
+                    <p className="text-gray-600">{(item.quantity ?? 1)} x {item.price} Kz</p>
                     <div className="flex items-center space-x-2 mt-2">
                       <button 
                         onClick={() => dispatch(decreaseBasket(item.id))} 
@@ -256,7 +256,7 @@ const CheckoutPage: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                  <p className="text-lg font-semibold">{(item.price * item.quantity).toFixed(2)} Kz</p>
+                  <p className="text-lg font-semibold">{(item.price * (item.quantity ?? 1)).toFixed(2)} Kz</p>
                 </div>
               ))}
               <div className="border-t pt-4 mt-4">
@@ -292,3 +292,4 @@ const CheckoutPage: React.FC = () => {
 };
 
 export default CheckoutPage;
+                 
