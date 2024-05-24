@@ -84,15 +84,7 @@ const HomePage = () => {
                 ))}
               </select>
             </div>
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className="border rounded py-1 px-3"
-                placeholder="Search..."
-              />
-            </div>
+         
           </div>
           <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredDrugs.map((drug: Drug) => (

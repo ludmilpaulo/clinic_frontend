@@ -4,8 +4,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { FaCreditCard, FaTruck, FaLock, FaMoneyBillAlt, FaBan } from 'react-icons/fa';
 import { selectCartItems, clearCart, updateBasket, decreaseBasket, removeFromBasket } from '@/redux/slices/basketSlice'; // Ensure correct import path
+import { selectUser } from '@/redux/slices/authSlice';
+import { baseAPI } from '@/utils/variables';
+import { RootState } from '@reduxjs/toolkit/query';
 
 const CheckoutPage: React.FC = () => {
+  const user = useSelector((state: RootState) => selectUser(state));
+  const token = user?.token;
+
   const cartItems = useSelector(selectCartItems);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -31,15 +37,49 @@ const CheckoutPage: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // Implement form submission logic here
-    console.log('Form submitted:', form);
+  
+    const orderData = {
+      total_price: totalPrice,
+      address: form.address,
+      city: form.city,
+      postal_code: form.postalCode,
+      country: form.country,
+      payment_method: paymentMethod,
+      items: cartItems.map(item => ({
+        id: item.id,
+        quantity: item.quantity
+      }))
+    };
+  
+    try {
+      const response = await fetch(`${baseAPI}/order/checkout/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Ensure you have user authentication handled
+        },
+        body: JSON.stringify(orderData)
+      });
+  
+      if (response.ok) {
+        dispatch(clearCart());
+        router.push('/thank-you');
+      } else {
+        const errorData = await response.json();
+        console.error('Error:', errorData);
+        alert(`Error: ${errorData.detail}`); // Show error to user
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.'); // Show error to user
+    }
+  
     setLoading(false);
-    dispatch(clearCart());
-    router.push('/thank-you');
   };
+  
 
   const totalPrice = cartItems.reduce((acc, item) => acc + item.price * (item.quantity ?? 1), 0);
 
