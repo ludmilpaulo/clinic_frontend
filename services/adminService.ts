@@ -38,7 +38,7 @@ const handleError = (error: unknown) => {
 
 export const fetchDrugs = async () => {
   try {
-    const response = await api.get('/pharmacy/drugs/');
+    const response = await axios.get(`${baseAPI}/pharmacy/drugs/`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -47,7 +47,7 @@ export const fetchDrugs = async () => {
 
 export const createDrug = async (drugData: FormData) => {
   try {
-    const response = await api.post('/pharmacy/drugs/create/', drugData, {
+    const response = await axios.post(`${baseAPI}/pharmacy/drugs/create/`, drugData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -60,7 +60,7 @@ export const createDrug = async (drugData: FormData) => {
 
 export const updateDrug = async (id: number, drugData: FormData) => {
   try {
-    const response = await api.put(`/pharmacy/drugs/${id}/`, drugData, {
+    const response = await axios.put(`${baseAPI}/pharmacy/pharmacy/detail/${id}/`, drugData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -73,7 +73,7 @@ export const updateDrug = async (id: number, drugData: FormData) => {
 
 export const deleteDrug = async (id: number) => {
   try {
-    const response = await api.delete(`/pharmacy/drugs/${id}/`);
+    const response = await axios.delete(`${baseAPI}/pharmacy/pharmacy/detail/${id}/`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -91,25 +91,36 @@ export const createOrder = async (orderData: any) => {
 
 export const fetchOrders = async () => {
   try {
-    const response = await api.get('/order/orders/');
+    const response = await axios.get(`${baseAPI}/order/orders/`);
     return response.data;
   } catch (error) {
-    handleError(error);
+    console.error('Error fetching orders:', error);
+    return [];
+  }
+};
+
+export const updateOrderStatus = async (orderId: number, data: { status: string }) => {
+  try {
+    await axios.patch(`${baseAPI}/order/orders/${orderId}/update-status/`, data);
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    throw error;
   }
 };
 
 export const fetchSalesSummary = async () => {
   try {
-    const response = await api.get('/order/sales-summary/');
+    const response = await axios.get(`${baseAPI}/order/sales-summary/`);
     return response.data;
   } catch (error) {
-    handleError(error);
+    console.error('Error fetching sales summary:', error);
+    return { daily_sales: 0, monthly_sales: 0, yearly_sales: 0 };
   }
 };
 
 export const fetchUserStatistics = async () => {
   try {
-    const response = await api.get('/order/user-statistics/');
+    const response = await axios.get(`${baseAPI}/order/user-statistics/`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -118,7 +129,7 @@ export const fetchUserStatistics = async () => {
 
 export const fetchLocationStatistics = async () => {
   try {
-    const response = await api.get('/location-statistics/');
+    const response = await axios.get(`${baseAPI}/order/location-statistics/`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -134,9 +145,14 @@ export const fetchUsers = async () => {
   }
 };
 
-export const fetchAboutUs = async () => {
-  const response = await axios.get(`${API_URL}/info/about-us/`);
-  return response.data;
+export const fetchAboutUs = async (): Promise<ApiResponse[]> => {
+  try {
+    const response = await axios.get<ApiResponse[]>(`${API_URL}/info/about-us/`);
+    return response.data || [];
+  } catch (error) {
+    console.error("Error fetching About Us data:", error);
+    return [];
+  }
 };
 
 export const createAboutUs = async (data: any) => {

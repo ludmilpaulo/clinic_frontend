@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import DrugForm from './DrugForm';
 import { deleteDrug, fetchDrugs } from '@/services/adminService';
+import Image from 'next/image';
 
 const DrugList: React.FC = () => {
-  const [drugs, setDrugs] = useState([]);
+  const [drugs, setDrugs] = useState<any[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [currentDrug, setCurrentDrug] = useState<any>(null);
 
@@ -31,9 +32,13 @@ const DrugList: React.FC = () => {
     setShowPopup(true);
   };
 
+  const closeModal = () => {
+    setShowPopup(false);
+  };
+
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Product</h1>
+      <h1 className="text-2xl font-bold mb-4">Products</h1>
       <button
         className="bg-blue-500 text-white px-4 py-2 mb-4 rounded"
         onClick={handleAddDrug}
@@ -43,6 +48,7 @@ const DrugList: React.FC = () => {
       <table className="w-full table-auto bg-white shadow-md rounded">
         <thead>
           <tr className="bg-gray-200 text-left">
+            <th className="px-4 py-2">Image</th>
             <th className="px-4 py-2">Name</th>
             <th className="px-4 py-2">Category</th>
             <th className="px-4 py-2">Price</th>
@@ -52,6 +58,17 @@ const DrugList: React.FC = () => {
         <tbody>
           {drugs.map((drug: any) => (
             <tr key={drug.id} className="border-b">
+              <td className="px-4 py-2">
+                {drug.image_urls && drug.image_urls.length > 0 && (
+                  <Image
+                    src={drug.image_urls[0]}
+                    alt={drug.name}
+                    width={64}
+                    height={64}
+                    className="object-cover rounded"
+                  />
+                )}
+              </td>
               <td className="px-4 py-2">{drug.name}</td>
               <td className="px-4 py-2">{drug.category_name}</td>
               <td className="px-4 py-2">{drug.price}</td>
@@ -74,15 +91,15 @@ const DrugList: React.FC = () => {
         </tbody>
       </table>
       {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-8 rounded shadow-md w-1/2">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-auto">
+          <div className="bg-white p-8 rounded shadow-md w-1/2 overflow-auto max-h-full">
             <button
               className="bg-red-500 text-white px-4 py-2 rounded mb-4"
               onClick={() => setShowPopup(false)}
             >
               Close
             </button>
-            <DrugForm drug={currentDrug} />
+            <DrugForm drug={currentDrug} onClose={closeModal} />
           </div>
         </div>
       )}

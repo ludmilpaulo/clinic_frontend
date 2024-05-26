@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
 import { updateDrug, createDrug } from '@/services/adminService';
 
-const DrugForm: React.FC<{ drug?: any }> = ({ drug }) => {
+const DrugForm: React.FC<{ drug?: any, onClose: () => void }> = ({ drug, onClose }) => {
   const [name, setName] = useState(drug?.name || '');
   const [category, setCategory] = useState(drug?.category || '');
   const [description, setDescription] = useState(drug?.description || '');
@@ -36,12 +36,6 @@ const DrugForm: React.FC<{ drug?: any }> = ({ drug }) => {
       }
     }
 
-    // Debugging logs
-    console.log('Form Data:', formData);
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ': ' + pair[1]);
-    }
-
     try {
       if (drug) {
         await updateDrug(drug.id, formData);
@@ -50,6 +44,7 @@ const DrugForm: React.FC<{ drug?: any }> = ({ drug }) => {
       }
       setLoading(false);
       alert('Drug successfully added/updated.');
+      onClose(); // Close the modal on successful submission
       router.push('/drugs');
     } catch (error) {
       setLoading(false);
@@ -155,7 +150,7 @@ const DrugForm: React.FC<{ drug?: any }> = ({ drug }) => {
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
-          {drug ? 'Update Drug' : 'Add Drug'}
+          {drug ? 'Update Product' : 'Add Product'}
         </button>
       </form>
     </div>
