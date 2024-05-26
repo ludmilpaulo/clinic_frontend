@@ -2,7 +2,7 @@ import axios from 'axios';
 import { store } from '@/redux/store';
 import { selectUser } from '@/redux/slices/authSlice';
 import { baseAPI } from '@/utils/variables';
-import { AboutUsData, User } from '@/utils/types';
+import { AboutUsData, ApiResponse, User } from '@/utils/types';
 
 const API_URL = baseAPI as string;
 
@@ -135,17 +135,17 @@ export const fetchUsers = async () => {
 };
 
 export const fetchAboutUs = async () => {
-  const response = await api.get(`${API_URL}/info/aboutus/`);
+  const response = await axios.get(`${API_URL}/info/about-us/`);
   return response.data;
 };
 
 export const createAboutUs = async (data: any) => {
-  const response = await api.post(`${API_URL}/info/aboutus/`, data);
+  const response = await api.post(`${API_URL}/info/about-us/`, data);
   return response.data;
 };
 
 export const updateAboutUs = async (id: number, data: any) => {
-  const response = await api.put(`${API_URL}/info/aboutus/${id}/`, data);
+  const response = await api.put(`${API_URL}/info/about-us/${id}/`, data);
   return response.data;
 };
 
@@ -263,10 +263,10 @@ export const deleteResource = async (resource: string, id: number) => {
   return response.data;
 };
 
-export const fetchAboutUsData = async (): Promise<AboutUsData | null> => {
+export const fetchAboutUsData = async (): Promise<ApiResponse | null> => {
   try {
-    const response = await api.get("/info/aboutus/");
-    return response.data[0] || null;
+    const response = await axios.get<ApiResponse>(`${API_URL}/info/about-us/`);
+    return response.data || null;
   } catch (error) {
     console.error("Error fetching About Us data:", error);
     return null;

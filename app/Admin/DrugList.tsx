@@ -33,12 +33,12 @@ const DrugList: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Drugs</h1>
+      <h1 className="text-2xl font-bold mb-4">Product</h1>
       <button
         className="bg-blue-500 text-white px-4 py-2 mb-4 rounded"
         onClick={handleAddDrug}
       >
-        Add New Drug
+        Add New Product
       </button>
       <table className="w-full table-auto bg-white shadow-md rounded">
         <thead>

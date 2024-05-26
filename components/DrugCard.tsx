@@ -61,11 +61,7 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
           <p className="font-semibold text-lg">{drug.name}</p>
           <p className="font-semibold text-lg">R{drug.price}</p>
         </div>
-        <p className="text-gray-500 text-sm">
-          {drug.description.length > 50
-            ? `${drug.description.substring(0, 50)}...`
-            : drug.description}
-        </p>
+       
         {drug.quantity_available < 10 && (
           <p className="text-red-500 text-sm mt-2">
             Warning: Low stock, only {drug.quantity_available} left!

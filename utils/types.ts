@@ -124,22 +124,26 @@ export interface User {
     quantity: number;
   }
 
+// utils/types.ts
+export interface AboutUsData {
+  id: number;
+  title: string;
+  logo: string;
+  backgroundImage: string | null;
+  backgroundApp: string | null;
+  about: string;
+  born_date: string | null;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  linkedin: string | null;
+  facebook: string | null;
+  twitter: string | null;
+  instagram: string | null;
+}
 
-  export interface AboutUsData {
-    id: number;
-    title: string;
-    logo: string;
-    back: string;
-    backgroundApp: string;
-    backgroundImage: string;
-    about: string;
-    born_date: string;
-    address: string;
-    phone: string;
-    email: string;
-    whatsapp: string;
-    linkedin: string | null;
-    facebook: string;
-    twitter: string;
-    instagram: string;
-  }
+export interface ApiResponse {
+  about: AboutUsData;
+  why_choose_us: any[];
+  testimonials: any[];
+}

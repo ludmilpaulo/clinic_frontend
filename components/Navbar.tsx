@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { FaSearch, FaHome, FaInfo, FaEnvelope, FaUser, FaBars, FaShoppingCart } from 'react-icons/fa';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { selectCartItems } from '@/redux/slices/basketSlice'; // Update the import path as needed
 import SearchResults from './SearchResults';
+import { fetchAboutUsData } from '@/services/adminService';
+import { AboutUsData } from '@/utils/types';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,6 +16,17 @@ const Navbar: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const cartItems = useSelector(selectCartItems);
   const cartItemCount = cartItems.reduce((count, item) => count + (item.quantity ?? 0), 0);
+
+  const [headerData, setHeaderData] = useState<AboutUsData | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchAboutUsData();
+      console.log("Fetched header data:", data);
+      setHeaderData(data?.about || null);
+    };
+    fetchData();
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -30,37 +44,49 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="bg-white shadow-lg fixed w-full z-10 top-0">
+      <nav className="bg-gradient-to-r from-white to-blue-700 shadow-lg fixed w-full z-10 top-0">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex text-white text-bold justify-between items-center py-4">
             <div className="text-2xl font-bold">
               <Link href="/">
-                <span className="cursor-pointer">MyLogo</span>
+                <span className="cursor-pointer flex items-center">
+                  {headerData?.logo && (
+                    <div className="relative w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 mr-2">
+                      <Image
+                        src={headerData.logo}
+                        alt={headerData.title}
+                        layout="fill"
+                        objectFit="contain"
+                        className="object-cover rounded-full"
+                      />
+                    </div>
+                  )}
+                </span>
               </Link>
             </div>
             <div className="hidden md:flex space-x-4">
               <Link href="/">
-                <span className="text-gray-800 hover:text-gray-600 flex items-center cursor-pointer">
+                <span className="hover:text-gray-600 flex items-center cursor-pointer">
                   <FaHome className="mr-1" /> Home
                 </span>
               </Link>
               <Link href="/AboutPage">
-                <span className="text-gray-800 hover:text-gray-600 flex items-center cursor-pointer">
+                <span className="hover:text-gray-600 flex items-center cursor-pointer">
                   <FaInfo className="mr-1" /> About
                 </span>
               </Link>
               <Link href="/ContactPage">
-                <span className="text-gray-800 hover:text-gray-600 flex items-center cursor-pointer">
+                <span className="hover:text-gray-600 flex items-center cursor-pointer">
                   <FaEnvelope className="mr-1" /> Contact
                 </span>
               </Link>
               <Link href="/ProfilePage">
-                <span className="text-gray-800 hover:text-gray-600 flex items-center cursor-pointer">
+                <span className="hover:text-gray-600 flex items-center cursor-pointer">
                   <FaUser className="mr-1" /> Profile
                 </span>
               </Link>
               <Link href="/CartPage">
-                <span className="text-gray-800 hover:text-gray-600 flex items-center relative cursor-pointer">
+                <span className="hover:text-gray-600 flex items-center relative cursor-pointer">
                   <FaShoppingCart className="mr-1" />
                   {cartItemCount > 0 && (
                     <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs px-1">
@@ -85,7 +111,7 @@ const Navbar: React.FC = () => {
             </div>
             <div className="md:hidden flex items-center">
               <Link href="/CartPage">
-                <span className="text-gray-800 hover:text-gray-600 flex items-center relative cursor-pointer mr-4">
+                <span className="hover:text-gray-600 flex items-center relative cursor-pointer mr-4">
                   <FaShoppingCart />
                   {cartItemCount > 0 && (
                     <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs px-1">
@@ -125,7 +151,7 @@ const Navbar: React.FC = () => {
               </Link>
               <Link href="/Admin">
                 <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
-                  <FaUser className="mr-1" />Staff Profile
+                  <FaUser className="mr-1" /> Staff Profile
                 </span>
               </Link>
               <div className="relative mt-2">

@@ -6,8 +6,7 @@ import { SocialIcon } from "react-social-icons";
 import { motion } from "framer-motion";
 import Image from 'next/image';
 import { fetchAboutUsData } from '@/services/adminService';
-import { AboutUsData } from '@/utils/types';
-
+import { AboutUsData, ApiResponse } from '@/utils/types';
 
 const currentYear = new Date().getFullYear();
 
@@ -16,18 +15,20 @@ const Footer: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchAboutUsData();
-      setHeaderData(data);
+      const data: ApiResponse | null = await fetchAboutUsData();
+      if (data) {
+        setHeaderData(data.about);
+      }
     };
     fetchData();
   }, []);
 
   return (
-    <footer className="bg-gradient-to-r from-yellow-400 to-blue-600 text-white">
+    <footer className="bg-gradient-to-r from-white to-[#1B2A67] text-white">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
           <div className="text-center md:text-left">
-            <h4 className="text-lg font-bold text-black mb-2">Baixe Nosso App</h4>
+            <h4 className="text-lg font-bold text-black mb-2">Download our App</h4>
             <div className="flex space-x-4">
               <Link href="https://apps.apple.com">
                 <span className="flex items-center space-x-2 hover:opacity-75 transition duration-300 cursor-pointer">
@@ -43,11 +44,10 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="text-center md:text-left">
-            <h4 className="text-lg font-bold text-black mb-2">Contacte-nos</h4>
             <div className="space-y-2">
               <p className="flex items-center justify-center md:justify-start space-x-2">
                 <FaEnvelope className="w-5 h-5" />
-               <span className="font-bold text-black">{headerData?.email}</span>
+                <span className="font-bold text-black">{headerData?.email}</span>
               </p>
               <p className="flex items-center justify-center md:justify-start space-x-2">
                 <FaPhone className="w-5 h-5" />
@@ -75,21 +75,15 @@ const Footer: React.FC = () => {
           </motion.div>
 
           <div className="text-center md:text-right">
-            <h4 className="text-lg font-bold text-black mb-2">Links Rápidos</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/contact">
-                  <span className="hover:opacity-75 transition duration-300 cursor-pointer font-bold text-black">Contacte-nos</span>
+                  <span className="hover:opacity-75 transition duration-300 cursor-pointer font-bold text-black">Contact-us</span>
                 </Link>
               </li>
               <li>
-                <Link href="/careers">
-                  <span className="hover:opacity-75 transition duration-300 cursor-pointer font-bold text-black">Carreiras</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/about">
-                  <span className="hover:opacity-75 transition duration-300 cursor-pointer font-bold text-black">Acerca de Nós</span>
+                <Link href="/AboutPage">
+                  <span className="hover:opacity-75 transition duration-300 cursor-pointer font-bold text-black">About Us</span>
                 </Link>
               </li>
             </ul>

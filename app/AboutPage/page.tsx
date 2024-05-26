@@ -12,7 +12,7 @@ const AboutPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get(`${baseAPI}/about-us/`)
+    axios.get(`${baseAPI}/info/about-us/`)
       .then(response => {
         setData(response.data);
         setLoading(false);
@@ -44,25 +44,29 @@ const AboutPage: React.FC = () => {
           {error && <div className="text-center text-red-500 mb-4">Error: {error}</div>}
           {data && (
             <div className="bg-white shadow-lg rounded-lg p-6">
-              <div className="relative h-64 w-full mb-4">
-                <Image
-                  src={data.about.backgroundImage}
-                  alt="Background"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg"
-                />
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="relative w-32 h-32 mb-4">
+              {data.about.backgroundImage && (
+                <div className="relative h-64 w-full mb-4">
                   <Image
-                    src={data.about.logo}
-                    alt="Logo"
+                    src={data.about.backgroundImage}
+                    alt="Background"
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-full"
+                    className="rounded-lg"
                   />
                 </div>
+              )}
+              <div className="flex flex-col items-center">
+                {data.about.logo && (
+                  <div className="relative w-32 h-32 mb-4">
+                    <Image
+                      src={data.about.logo}
+                      alt="Logo"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-full"
+                    />
+                  </div>
+                )}
                 <h1 className="text-3xl font-bold mb-2">{data.about.title}</h1>
                 <p className="text-gray-700 text-center mb-4" dangerouslySetInnerHTML={{ __html: data.about.about }} />
                 <div className="flex space-x-4 mb-4">
@@ -92,23 +96,19 @@ const AboutPage: React.FC = () => {
                     </a>
                   )}
                 </div>
-                <div className="w-full md:w-2/3 lg:w-1/2">
-                  <h2 className="text-2xl font-bold mb-2">Why Choose Us</h2>
-                  {data.why_choose_us.map((item: any) => (
-                    <div key={item.title} className="mb-4">
-                      <h3 className="text-xl font-semibold">{item.title}</h3>
-                      <p className="text-gray-700">{item.content}</p>
-                    </div>
-                  ))}
-                </div>
+               
                 <div className="w-full md:w-2/3 lg:w-1/2 mt-6">
                   <h2 className="text-2xl font-bold mb-2">Testimonials</h2>
-                  {data.testimonials.map((testimonial: any) => (
-                    <div key={testimonial.author} className="mb-4">
-                      <p className="text-gray-700 italic">{"&quot;" + testimonial.content + "&quot;"}</p>
-                      <p className="text-gray-900 font-semibold">- {testimonial.author}</p>
-                    </div>
-                  ))}
+                  {data.testimonials.length > 0 ? (
+                    data.testimonials.map((testimonial: any) => (
+                      <div key={testimonial.author} className="mb-4">
+                        <p className="text-gray-700 italic">{"&quot;" + testimonial.content + "&quot;"}</p>
+                        <p className="text-gray-900 font-semibold">- {testimonial.author}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-700">No testimonials available.</p>
+                  )}
                 </div>
               </div>
             </div>
