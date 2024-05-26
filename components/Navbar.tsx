@@ -44,7 +44,8 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="bg-gradient-to-r from-white to-blue-700 shadow-lg fixed w-full z-10 top-0">
+      <nav className="bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900
+ shadow-lg fixed w-full z-10 top-0">
         <div className="container mx-auto px-4">
           <div className="flex text-white text-bold justify-between items-center py-4">
             <div className="text-2xl font-bold">

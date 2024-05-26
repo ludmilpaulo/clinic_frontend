@@ -24,11 +24,12 @@ const Footer: React.FC = () => {
   }, []);
 
   return (
-    <footer className="bg-gradient-to-r from-white to-[#1B2A67] text-white">
+    <footer className="bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900
+    text-white">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
           <div className="text-center md:text-left">
-            <h4 className="text-lg font-bold text-black mb-2">Download our App</h4>
+            <h4 className="text-lg font-bold text-white mb-2">Download our App</h4>
             <div className="flex space-x-4">
               <Link href="https://apps.apple.com">
                 <span className="flex items-center space-x-2 hover:opacity-75 transition duration-300 cursor-pointer">
@@ -43,19 +44,19 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          <div className="text-center md:text-left">
+          <div className="text-center  text-white md:text-left">
             <div className="space-y-2">
               <p className="flex items-center justify-center md:justify-start space-x-2">
                 <FaEnvelope className="w-5 h-5" />
-                <span className="font-bold text-black">{headerData?.email}</span>
+                <span className="font-bold">{headerData?.email}</span>
               </p>
               <p className="flex items-center justify-center md:justify-start space-x-2">
                 <FaPhone className="w-5 h-5" />
-                <span className="font-bold text-black">{headerData?.phone}</span>
+                <span className="font-bold ">{headerData?.phone}</span>
               </p>
               <p className="flex items-center justify-center md:justify-start space-x-2">
                 <FaMapMarkerAlt className="w-5 h-5" />
-                <span className="font-bold text-black">{headerData?.address}</span>
+                <span className="font-bold ">{headerData?.address}</span>
               </p>
             </div>
           </div>
@@ -74,23 +75,23 @@ const Footer: React.FC = () => {
             </>
           </motion.div>
 
-          <div className="text-center md:text-right">
+          <div className="text-center md:text-right  text-white">
             <ul className="space-y-2">
               <li>
                 <Link href="/contact">
-                  <span className="hover:opacity-75 transition duration-300 cursor-pointer font-bold text-black">Contact-us</span>
+                  <span className="hover:opacity-75 transition duration-300 cursor-pointer font-bold ">Contact-us</span>
                 </Link>
               </li>
               <li>
                 <Link href="/AboutPage">
-                  <span className="hover:opacity-75 transition duration-300 cursor-pointer font-bold text-black">About Us</span>
+                  <span className="hover:opacity-75 transition duration-300 cursor-pointer font-bold">About Us</span>
                 </Link>
               </li>
             </ul>
           </div>
         </div>
         <div className="text-center mt-8">
-          <p className="text-sm font-bold text-black">&copy; {currentYear}  </p>
+          <p className="text-sm font-bold text-white">&copy; {currentYear} All rights reserved  </p>
         </div>
       </div>
     </footer>
