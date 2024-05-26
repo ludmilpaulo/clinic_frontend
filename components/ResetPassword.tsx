@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Transition } from '@headlessui/react';
 import { resetPassword } from '@/services/authService';
@@ -84,4 +84,10 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+const ResetPasswordDetails = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ResetPassword />
+  </Suspense>
+);
+
+export default ResetPasswordDetails;

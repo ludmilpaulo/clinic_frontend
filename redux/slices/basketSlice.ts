@@ -3,7 +3,7 @@ import { RootState } from "../store";
 import { Drug } from "@/utils/types";
 
 interface BasketState {
-  items: Drug[];
+  items: (Drug & { quantity: number })[];
 }
 
 const initialState: BasketState = {
@@ -64,8 +64,7 @@ const basketSlice = createSlice({
   },
 });
 
-export const { updateBasket, decreaseBasket, removeFromBasket, clearCart, removeOrderedItems } =
-  basketSlice.actions;
+export const { updateBasket, decreaseBasket, removeFromBasket, clearCart, removeOrderedItems } = basketSlice.actions;
 export const selectCartItems = (state: RootState) => state.basket.items;
 
 export default basketSlice.reducer;

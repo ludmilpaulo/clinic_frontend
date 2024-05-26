@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateBasket, selectCartItems } from '@/redux/slices/basketSlice'; // Update the import path as needed
 import { Drug } from '@/utils/types';
 import { baseAPI } from '@/utils/variables';
+import withActiveUser from '@/hoc/withActiveUser';
 
 const DrugPage: React.FC = () => {
   const [drug, setDrug] = useState<Drug | null>(null);
@@ -23,6 +24,7 @@ const DrugPage: React.FC = () => {
   const drugId = searchParams.get('id');
 
   useEffect(() => {
+
     if (drugId) {
       axios.get(`${baseAPI}/pharmacy/pharmacy/detail/${drugId}/`)
         .then(response => {
@@ -140,4 +142,11 @@ const DrugPage: React.FC = () => {
   );
 };
 
-export default DrugPage;
+const DrugPageDetails = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <DrugPage />
+  </Suspense>
+);
+
+
+export default DrugPageDetails;

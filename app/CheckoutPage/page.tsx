@@ -12,6 +12,8 @@ const CheckoutPage: React.FC = () => {
   const user = useSelector(selectUser);
   const token = user?.token;
 
+  console.log("TOKE", token)
+
   const cartItems = useSelector(selectCartItems);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -42,6 +44,10 @@ const CheckoutPage: React.FC = () => {
     setLoading(true);
   
     const orderData = {
+      token: token || null, // Pass the token if available
+      user_id: user?.user_id,
+      name: form.name,
+      email: form.email,
       total_price: totalPrice,
       address: form.address,
       city: form.city,
@@ -59,7 +65,6 @@ const CheckoutPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Ensure you have user authentication handled
         },
         body: JSON.stringify(orderData)
       });
@@ -332,4 +337,3 @@ const CheckoutPage: React.FC = () => {
 };
 
 export default CheckoutPage;
-                 

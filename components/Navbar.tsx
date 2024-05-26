@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from 'react';
 import { FaSearch, FaHome, FaInfo, FaEnvelope, FaUser, FaBars, FaShoppingCart } from 'react-icons/fa';
 import Link from 'next/link';
@@ -11,7 +12,7 @@ const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const cartItems = useSelector(selectCartItems);
-  const cartItemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
+  const cartItemCount = cartItems.reduce((count, item) => count + (item.quantity ?? 0), 0);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -120,6 +121,11 @@ const Navbar: React.FC = () => {
               <Link href="/ProfilePage">
                 <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
                   <FaUser className="mr-1" /> Profile
+                </span>
+              </Link>
+              <Link href="/Admin">
+                <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
+                  <FaUser className="mr-1" />Staff Profile
                 </span>
               </Link>
               <div className="relative mt-2">

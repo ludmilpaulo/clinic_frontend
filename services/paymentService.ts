@@ -26,6 +26,9 @@ export const processPayment = async (paymentData: PaymentData) => {
     );
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Payment failed');
+    if (axios.isAxiosError(error) && error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error('Payment failed');
   }
 };

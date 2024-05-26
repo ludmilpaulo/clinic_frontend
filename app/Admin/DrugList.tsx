@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import DrugForm from './DrugForm';
 import { deleteDrug, fetchDrugs } from '@/services/adminService';
 
@@ -17,7 +16,7 @@ const DrugList: React.FC = () => {
     loadDrugs();
   }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     await deleteDrug(id);
     setDrugs(drugs.filter((drug: any) => drug.id !== id));
   };

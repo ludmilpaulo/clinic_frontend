@@ -18,7 +18,12 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
   const [inCart, setInCart] = useState(false);
 
   const handleAdd = (drug: Drug) => {
-    dispatch(updateBasket(drug));
+    const currentCartQuantity = cartItems.find((item) => item.id === drug.id)?.quantity ?? 0;
+    if (currentCartQuantity < drug.quantity_available) {
+      dispatch(updateBasket(drug));
+    } else {
+      alert("Cannot add more than available stock");
+    }
   };
 
   const handleDecrease = (drugId: number) => {
@@ -54,7 +59,7 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
       <div className="p-4">
         <div className="mb-2 flex items-center justify-between">
           <p className="font-semibold text-lg">{drug.name}</p>
-          <p className="font-semibold text-lg">{drug.price} Kz</p>
+          <p className="font-semibold text-lg">R{drug.price}</p>
         </div>
         <p className="text-gray-500 text-sm">
           {drug.description.length > 50

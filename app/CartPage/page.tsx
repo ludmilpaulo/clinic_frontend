@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { selectCartItems, updateBasket, decreaseBasket, removeFromBasket, clearCart } from '@/redux/slices/basketSlice'; // Update the import path as needed
 import { useRouter } from 'next/navigation';
 import { Drug } from '@/utils/types'; // Import the Drug interface
+import withActiveUser from '@/hoc/withActiveUser';
 
 const CartPage: React.FC = () => {
   const cartItems = useSelector(selectCartItems);
@@ -87,7 +88,7 @@ const CartPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <p className="text-lg font-semibold">{(item.price * (item.quantity || 1)).toFixed(2)} Kz</p>
+                  <p className="text-lg font-semibold">R{(item.price * (item.quantity || 1)).toFixed(2)} </p>
                   <button 
                     onClick={() => handleRemove(item.id)} 
                     className="text-red-500 hover:text-red-700 transition-colors duration-300"
@@ -99,7 +100,7 @@ const CartPage: React.FC = () => {
             ))}
             <div className="flex justify-between items-center mt-6">
               <h3 className="text-xl font-semibold">Total</h3>
-              <p className="text-2xl font-bold">{totalPrice.toFixed(2)} Kz</p>
+              <p className="text-2xl font-bold">R{totalPrice.toFixed(2)} </p>
             </div>
             <div className="flex justify-end mt-6">
               <button 

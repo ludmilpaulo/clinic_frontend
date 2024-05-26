@@ -1,12 +1,15 @@
 "use client";
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import Sidebar from './Sidebar';
-import DrugList from './DrugList';
-import LocationStatistics from './LocationStatistics';
-import OrderList from './OrderList';
-import Revenue from './Revenue';
-import UserList from './UserList';
-import UserStatistics from './UserStatistics';
+import withStaff from '@/hoc/withStaff';
+
+const UserList = dynamic(() => import('./UserList'), { ssr: false });
+const OrderList = dynamic(() => import('./OrderList'), { ssr: false });
+const DrugList = dynamic(() => import('./DrugList'), { ssr: false });
+const Revenue = dynamic(() => import('./Revenue'), { ssr: false });
+const UserStatistics = dynamic(() => import('./UserStatistics'), { ssr: false });
+const LocationStatistics = dynamic(() => import('./LocationStatistics'), { ssr: false });
 
 const Layout: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState('users');

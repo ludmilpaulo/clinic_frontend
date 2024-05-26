@@ -89,7 +89,7 @@ const Appointments: React.FC = () => {
   const handleBooking = async () => {
     if (selectedSlot && token) {
       const appointmentData: Appointment = {
-        patient: user?.user_id!,
+        patient: user?.id,
         doctor: selectedSlot.doctor_user_id,
         category: parseInt(category),
         appointment_time: selectedSlot.time.toISOString(),

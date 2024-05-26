@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/services/authService';
 import Link from 'next/link';
+import axios, { isAxiosError } from 'axios';
 import { Transition } from '@headlessui/react';
 import { useDispatch } from "react-redux";
 import { Eye, EyeOff } from 'lucide-react';
@@ -27,10 +28,16 @@ const LoginForm = () => {
       const data = await login(username, password);
       alert('Login successful.');
       dispatch(loginUser(data));
-      console.log('Login data:', data);
       router.push('/');
-    } catch (err) {
-      setError('Failed to login. Please try again.');
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response?.data?.error) {
+        const errorMessage = err.response.data.error;
+        setError(errorMessage);
+        alert(errorMessage);  // Display alert with error message
+      } else {
+        setError('Failed to login. Please try again.');
+        alert('Failed to login. Please try again.');  // Display generic error message
+      }
       setLoading(false);
     }
   };
@@ -84,12 +91,12 @@ const LoginForm = () => {
           </button>
         </form>
         <div className="mt-6 text-center">
-          <Link href="/signup">
-            <span className="text-blue-500 hover:underline cursor-pointer">Don't have an account? Sign up</span>
+          <Link href="/Signup">
+            <span className="text-blue-500 hover:underline cursor-pointer">Don&apos;t have an account? Sign up</span>
           </Link>
         </div>
         <div className="mt-4 text-center">
-          <Link href="/ForgotPasswordForm">
+          <Link href="/ResetPassword">
             <span className="text-blue-500 hover:underline cursor-pointer">Forgot Password?</span>
           </Link>
         </div>

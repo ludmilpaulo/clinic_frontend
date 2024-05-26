@@ -126,7 +126,7 @@ const Availability: React.FC<AvailabilityProps> = ({ userId }) => {
     }
 
     const availabilityData = {
-      user_id: user?.user_id,
+      user_id: user?.id,
       consultation_category: categoryId,
       days_of_week: daysOfWeek.length > 0 ? daysOfWeek : null,
       day_of_month: dayOfMonth || null,
