@@ -9,7 +9,7 @@ import { baseAPI } from '@/utils/variables';
 import { RootState } from '@reduxjs/toolkit/query';
 
 const CheckoutPage: React.FC = () => {
-  const user = useSelector((state: RootState) => selectUser(state));
+  const user = useSelector(selectUser);
   const token = user?.token;
 
   const cartItems = useSelector(selectCartItems);

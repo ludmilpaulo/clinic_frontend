@@ -1,32 +1,57 @@
 import { baseAPI } from '@/utils/variables';
-import axios from 'axios';
 
-const API_URL = `${baseAPI}`;
-
-export const login = async (username: string, password: string) => {
-  const response = await axios.post(`${API_URL}/account/custom-login/`, { username, password });
-  return response.data;
-};
-
-// services/authService.ts
+import axios, { isAxiosError } from 'axios';
 
 
-export const signup = async (formData: FormData) => {
+const API_URL = `${baseAPI}/account`;
+
+
+
+export const signup = async (username: string, email: string, password: string) => {
   try {
-    const response = await axios.post(`${API_URL}/account/custom-signup/`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    if (response.status === 201) {
-      return response.data;
-    } else {
-      return response.data;
-    }
+const API_URL = `${baseAPI}/account`;
+    const response = await axios.post(`${API_URL}/signup/`, { username, email, password });
+    return response.data;
   } catch (error) {
-   
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data;
+    }
     throw error;
   }
 };
 
+export const login = async (username: string, password: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/login/`, { username, password });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data;
+    }
+    throw error;
+  }
+};
 
+export const requestPasswordReset = async (email: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/password-reset/`, { email });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data;
+    }
+    throw error;
+  }
+};
+
+export const resetPassword = async (uid: string, token: string, newPassword: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/password-reset/confirm/`, { uid, token, newPassword });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data;
+    }
+    throw error;
+  }
+};

@@ -1,22 +1,20 @@
-// components/LoginForm.tsx
-
 import { useState } from 'react';
-
-import { login } from '../services/authService';
-import { isAxiosError } from 'axios';
-import { Eye, EyeOff } from 'lucide-react';
-import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import { loginUser } from '@/redux/slices/authSlice';
+import { login } from '@/services/authService';
+import Link from 'next/link';
 import { Transition } from '@headlessui/react';
+import { useDispatch } from "react-redux";
+import { Eye, EyeOff } from 'lucide-react';
+import { loginUser } from "@/redux/slices/authSlice";
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const dispatch = useDispatch();
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
@@ -27,25 +25,18 @@ const LoginForm = () => {
     setLoading(true);
     try {
       const data = await login(username, password);
-      if (data.status === 201) {
-        console.log('sign up data', data);
-        dispatch(loginUser({ user_id: data.user_id, username: data.username, token: data.token }));
-        alert('Signup successful, please verify your email.');
-        setLoading(false);
-        // router.push('/'); // Redirect to login page
-      } else {
-        console.log('sign up data 2', data);
-        alert('Something went wrong. Please try again later.');
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('Login failed', error);
+      alert('Login successful.');
+      dispatch(loginUser(data));
+      console.log('Login data:', data);
+      router.push('/');
+    } catch (err) {
+      setError('Failed to login. Please try again.');
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-500">
       <Transition
         show={loading}
         enter="transition-opacity duration-300"
@@ -55,40 +46,53 @@ const LoginForm = () => {
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full">
-          <div className="w-32 h-32 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+        <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+          <div className="w-16 h-16 border-t-4 border-b-4 border-white rounded-full animate-spin"></div>
         </div>
       </Transition>
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
+      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-700">Login</h1>
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-bold mb-2">Username</label>
+            <label className="block text-sm font-semibold mb-2 text-gray-700">Username</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <div className="mb-4">
-          <label className="block text-sm font-bold mb-2">Password</label>
+          <div className="mb-4 relative">
+            <label className="block text-sm font-semibold mb-2 text-gray-700">Password</label>
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3"
+              className="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-gray-500"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">Login</button>
+          <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full transition duration-200">
+            Login
+          </button>
         </form>
+        <div className="mt-6 text-center">
+          <Link href="/signup">
+            <span className="text-blue-500 hover:underline cursor-pointer">Don't have an account? Sign up</span>
+          </Link>
+        </div>
+        <div className="mt-4 text-center">
+          <Link href="/ForgotPasswordForm">
+            <span className="text-blue-500 hover:underline cursor-pointer">Forgot Password?</span>
+          </Link>
+        </div>
       </div>
     </div>
   );
