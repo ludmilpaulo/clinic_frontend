@@ -12,8 +12,18 @@ const AboutUsPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchAboutUs();
-      setItems(data);
+      try {
+        const data = await fetchAboutUs();
+        if (Array.isArray(data)) {
+          setItems(data);
+        } else {
+          console.error('Unexpected data format:', data);
+          setItems([]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch about us data:', error);
+        setItems([]);
+      }
     };
     fetchData();
   }, []);
