@@ -18,6 +18,12 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveComponent, activeComponent }
             Users
           </li>
           <li
+            className={`cursor-pointer p-2 ${activeComponent === 'Site Info' ? 'bg-gray-200' : ''}`}
+            onClick={() => setActiveComponent('site-info')}
+          >
+            Users
+          </li>
+          <li
             className={`cursor-pointer p-2 ${activeComponent === 'orders' ? 'bg-gray-200' : ''}`}
             onClick={() => setActiveComponent('orders')}
           >

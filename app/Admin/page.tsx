@@ -6,6 +6,7 @@ import withStaff from '@/hoc/withStaff';
 
 const UserList = dynamic(() => import('./UserList'), { ssr: false });
 const OrderList = dynamic(() => import('./OrderList'), { ssr: false });
+const SiteInfo = dynamic(() => import('./info/SiteInfo'));
 const DrugList = dynamic(() => import('./DrugList'), { ssr: false });
 const Revenue = dynamic(() => import('./Revenue'), { ssr: false });
 const UserStatistics = dynamic(() => import('./UserStatistics'), { ssr: false });
@@ -18,6 +19,9 @@ const Layout: React.FC = () => {
   switch (activeComponent) {
     case 'users':
       componentToRender = <UserList />;
+      break;
+    case 'site-info':
+      componentToRender = <SiteInfo />;
       break;
     case 'orders':
       componentToRender = <OrderList />;
