@@ -33,7 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveComponent, activeComponent }
             className={`cursor-pointer p-2 ${activeComponent === 'drugs' ? 'bg-gray-200' : ''}`}
             onClick={() => setActiveComponent('drugs')}
           >
-            Drugs
+            Products
           </li>
           <li
             className={`cursor-pointer p-2 ${activeComponent === 'revenue' ? 'bg-gray-200' : ''}`}
