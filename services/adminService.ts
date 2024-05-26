@@ -2,7 +2,7 @@ import axios from 'axios';
 import { store } from '@/redux/store';
 import { selectUser } from '@/redux/slices/authSlice';
 import { baseAPI } from '@/utils/variables';
-import { User } from '@/utils/types';
+import { AboutUsData, User } from '@/utils/types';
 
 const API_URL = baseAPI as string;
 
@@ -261,4 +261,14 @@ export const updateResource = async (resource: string, id: number, data: any) =>
 export const deleteResource = async (resource: string, id: number) => {
   const response = await api.delete(`/${resource}/${id}/`);
   return response.data;
+};
+
+export const fetchAboutUsData = async (): Promise<AboutUsData | null> => {
+  try {
+    const response = await api.get("/info/aboutus/");
+    return response.data[0] || null;
+  } catch (error) {
+    console.error("Error fetching About Us data:", error);
+    return null;
+  }
 };
