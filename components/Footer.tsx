@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
     const fetchData = async () => {
       const data: ApiResponse | null = await fetchAboutUsData();
       if (data) {
-        setHeaderData(data.about);
+        setHeaderData(data[0]);
       }
     };
     fetchData();

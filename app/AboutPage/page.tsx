@@ -14,7 +14,9 @@ const AboutPage: React.FC = () => {
   useEffect(() => {
     axios.get(`${baseAPI}/info/about-us/`)
       .then(response => {
-        setData(response.data);
+        console.log("about data", response.data);
+        const aboutData = response.data[0]; // Access the first element of the array
+        setData(aboutData);
         setLoading(false);
       })
       .catch(error => {
@@ -42,24 +44,13 @@ const AboutPage: React.FC = () => {
       {!loading && (
         <>
           {error && <div className="text-center text-red-500 mb-4">Error: {error}</div>}
-          {data && data.about && (
+          {data && (
             <div className="bg-white shadow-lg rounded-lg p-6">
-              {data.about.backgroundImage && (
-                <div className="relative h-64 w-full mb-4">
-                  <Image
-                    src={data.about.backgroundImage}
-                    alt="Background"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-lg"
-                  />
-                </div>
-              )}
               <div className="flex flex-col items-center">
-                {data.about.logo && (
+                {data.logo && (
                   <div className="relative w-32 h-32 mb-4">
                     <Image
-                      src={data.about.logo}
+                      src={data.logo}
                       alt="Logo"
                       layout="fill"
                       objectFit="cover"
@@ -67,23 +58,20 @@ const AboutPage: React.FC = () => {
                     />
                   </div>
                 )}
-                <h1 className="text-4xl font-bold mb-4 text-gray-800">{data.about.title}</h1>
-                <p className="text-gray-700 text-center mb-8" dangerouslySetInnerHTML={{ __html: data.about.about }} />
+                <h1 className="text-4xl font-bold mb-4 text-gray-800">{data.title}</h1>
+                <p className="text-gray-700 text-center mb-8" dangerouslySetInnerHTML={{ __html: data.about }} />
                 <div className="flex space-x-4 mb-8">
-                  {data.about.github && (
-                    <SocialIcon url={data.about.github} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
+                  {data.linkedin && (
+                    <SocialIcon url={data.linkedin} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
-                  {data.about.linkedin && (
-                    <SocialIcon url={data.about.linkedin} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
+                  {data.facebook && (
+                    <SocialIcon url={data.facebook} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
-                  {data.about.facebook && (
-                    <SocialIcon url={data.about.facebook} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
+                  {data.twitter && (
+                    <SocialIcon url={data.twitter} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
-                  {data.about.twitter && (
-                    <SocialIcon url={data.about.twitter} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
-                  )}
-                  {data.about.instagram && (
-                    <SocialIcon url={data.about.instagram} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
+                  {data.instagram && (
+                    <SocialIcon url={data.instagram} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
                 </div>
                 <div className="w-full md:w-2/3 lg:w-1/2 mt-6">
