@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
-import { FaGithub, FaLinkedin, FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
 import { Transition } from '@headlessui/react';
+import { SocialIcon } from 'react-social-icons';
 import { baseAPI } from '@/utils/variables';
 
 const AboutPage: React.FC = () => {
@@ -42,7 +42,7 @@ const AboutPage: React.FC = () => {
       {!loading && (
         <>
           {error && <div className="text-center text-red-500 mb-4">Error: {error}</div>}
-          {data && (
+          {data && data.about && (
             <div className="bg-white shadow-lg rounded-lg p-6">
               {data.about.backgroundImage && (
                 <div className="relative h-64 w-full mb-4">
@@ -67,43 +67,32 @@ const AboutPage: React.FC = () => {
                     />
                   </div>
                 )}
-                <h1 className="text-3xl font-bold mb-2">{data.about.title}</h1>
-                <p className="text-gray-700 text-center mb-4" dangerouslySetInnerHTML={{ __html: data.about.about }} />
-                <div className="flex space-x-4 mb-4">
+                <h1 className="text-4xl font-bold mb-4 text-gray-800">{data.about.title}</h1>
+                <p className="text-gray-700 text-center mb-8" dangerouslySetInnerHTML={{ __html: data.about.about }} />
+                <div className="flex space-x-4 mb-8">
                   {data.about.github && (
-                    <a href={data.about.github} target="_blank" rel="noopener noreferrer">
-                      <FaGithub className="text-gray-800 hover:text-gray-600 transition-colors duration-300" />
-                    </a>
+                    <SocialIcon url={data.about.github} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
                   {data.about.linkedin && (
-                    <a href={data.about.linkedin} target="_blank" rel="noopener noreferrer">
-                      <FaLinkedin className="text-blue-700 hover:text-blue-500 transition-colors duration-300" />
-                    </a>
+                    <SocialIcon url={data.about.linkedin} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
                   {data.about.facebook && (
-                    <a href={data.about.facebook} target="_blank" rel="noopener noreferrer">
-                      <FaFacebook className="text-blue-600 hover:text-blue-400 transition-colors duration-300" />
-                    </a>
+                    <SocialIcon url={data.about.facebook} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
                   {data.about.twitter && (
-                    <a href={data.about.twitter} target="_blank" rel="noopener noreferrer">
-                      <FaTwitter className="text-blue-500 hover:text-blue-300 transition-colors duration-300" />
-                    </a>
+                    <SocialIcon url={data.about.twitter} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
                   {data.about.instagram && (
-                    <a href={data.about.instagram} target="_blank" rel="noopener noreferrer">
-                      <FaInstagram className="text-pink-500 hover:text-pink-300 transition-colors duration-300" />
-                    </a>
+                    <SocialIcon url={data.about.instagram} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
                 </div>
-               
                 <div className="w-full md:w-2/3 lg:w-1/2 mt-6">
-                  <h2 className="text-2xl font-bold mb-2">Testimonials</h2>
-                  {data.testimonials.length > 0 ? (
+                  <h2 className="text-2xl font-bold mb-4 text-gray-800">Testimonials</h2>
+                  {data.testimonials && data.testimonials.length > 0 ? (
                     data.testimonials.map((testimonial: any) => (
-                      <div key={testimonial.author} className="mb-4">
+                      <div key={testimonial.author} className="mb-6 p-4 bg-gray-100 rounded-lg shadow-md">
                         <p className="text-gray-700 italic">{"&quot;" + testimonial.content + "&quot;"}</p>
-                        <p className="text-gray-900 font-semibold">- {testimonial.author}</p>
+                        <p className="text-gray-900 font-semibold mt-2">- {testimonial.author}</p>
                       </div>
                     ))
                   ) : (

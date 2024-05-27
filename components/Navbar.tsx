@@ -2,15 +2,20 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { FaSearch, FaHome, FaInfo, FaEnvelope, FaUser, FaBars, FaShoppingCart } from 'react-icons/fa';
+import { FaSearch, FaHome, FaInfo, FaEnvelope, FaUser, FaBars, FaShoppingCart, FaSignInAlt } from 'react-icons/fa';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { selectCartItems } from '@/redux/slices/basketSlice'; // Update the import path as needed
 import SearchResults from './SearchResults';
 import { fetchAboutUsData } from '@/services/adminService';
 import { AboutUsData } from '@/utils/types';
+import { selectUser } from '@/redux/slices/authSlice';
+import { RootState } from '@/redux/store';
 
 const Navbar: React.FC = () => {
+  const user = useSelector((state: RootState) => selectUser(state));
+  const token = user?.token;
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -44,8 +49,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900
- shadow-lg fixed w-full z-10 top-0">
+      <nav className="bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900 shadow-lg fixed w-full z-10 top-0">
         <div className="container mx-auto px-4">
           <div className="flex text-white text-bold justify-between items-center py-4">
             <div className="text-2xl font-bold">
@@ -81,11 +85,6 @@ const Navbar: React.FC = () => {
                   <FaEnvelope className="mr-1" /> Contact
                 </span>
               </Link>
-              <Link href="/ProfilePage">
-                <span className="hover:text-gray-600 flex items-center cursor-pointer">
-                  <FaUser className="mr-1" /> Profile
-                </span>
-              </Link>
               <Link href="/CartPage">
                 <span className="hover:text-gray-600 flex items-center relative cursor-pointer">
                   <FaShoppingCart className="mr-1" />
@@ -97,6 +96,26 @@ const Navbar: React.FC = () => {
                   Cart
                 </span>
               </Link>
+              {user?.is_staff && (
+                <Link href="/Admin">
+                  <span className="hover:text-gray-600 flex items-center cursor-pointer">
+                    <FaUser className="mr-1" /> Staff Profile
+                  </span>
+                </Link>
+              )}
+              {user ? (
+                <Link href="/UserProfile">
+                  <span className="hover:text-gray-600 flex items-center cursor-pointer">
+                    <FaUser className="mr-1" /> Profile
+                  </span>
+                </Link>
+              ) : (
+                <Link href="/Login">
+                  <span className="hover:text-gray-600 flex items-center cursor-pointer">
+                    <FaSignInAlt className="mr-1" /> Login
+                  </span>
+                </Link>
+              )}
             </div>
             <div className="relative hidden md:flex items-center">
               <form className="relative">
@@ -145,16 +164,26 @@ const Navbar: React.FC = () => {
                   <FaEnvelope className="mr-1" /> Contact
                 </span>
               </Link>
-              <Link href="/ProfilePage">
-                <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
-                  <FaUser className="mr-1" /> Profile
-                </span>
-              </Link>
-              <Link href="/Admin">
-                <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
-                  <FaUser className="mr-1" /> Staff Profile
-                </span>
-              </Link>
+              {user?.is_staff && (
+                <Link href="/Admin">
+                  <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
+                    <FaUser className="mr-1" /> Staff Profile
+                  </span>
+                </Link>
+              )}
+              {user ? (
+                <Link href="/UserProfile">
+                  <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
+                    <FaUser className="mr-1" /> Profile
+                  </span>
+                </Link>
+              ) : (
+                <Link href="/Login">
+                  <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
+                    <FaSignInAlt className="mr-1" /> Login
+                  </span>
+                </Link>
+              )}
               <div className="relative mt-2">
                 <form className="relative">
                   <input

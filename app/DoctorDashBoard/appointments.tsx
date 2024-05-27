@@ -4,14 +4,21 @@ import { RootState } from '@/redux/store';
 import { selectUser } from '@/redux/slices/authSlice';
 import axios from 'axios';
 import { baseAPI } from '@/utils/variables';
-import dayjs from 'dayjs'; // Install dayjs for date formatting
+import dayjs from 'dayjs';
+
+// Define the Appointment type
+interface Appointment {
+  id: number;
+  appointment_time: string;
+  patient_name: string;
+}
 
 interface AppointmentsProps {
   userId: number | null;
 }
 
 const Appointments: React.FC<AppointmentsProps> = ({ userId }) => {
-  const [appointments, setAppointments] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const user = useSelector((state: RootState) => selectUser(state));
   const token = user?.token;
 
@@ -23,7 +30,7 @@ const Appointments: React.FC<AppointmentsProps> = ({ userId }) => {
         }
       })
       .then(response => {
-        console.log("appointment data",response.data)
+        console.log("appointment data", response.data);
         setAppointments(response.data);
       })
       .catch(error => {

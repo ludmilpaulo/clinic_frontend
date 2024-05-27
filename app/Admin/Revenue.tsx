@@ -41,7 +41,7 @@ const Revenue: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className='bg-white'>
       <h1 className="text-2xl font-bold mb-4">Revenue</h1>
       <Bar data={data} options={options} />
     </div>

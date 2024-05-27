@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import ModalForm from './ModalForm';
 import { fetchAboutUs, createAboutUs, updateAboutUs, deleteAboutUs } from '@/services/adminService';
+import { AboutUsData, ApiResponse } from '@/utils/types';
 
 const AboutUsPage = () => {
-  const [items, setItems] = useState<any[]>([]);
-  const [formData, setFormData] = useState<any>({ about: '' });
+  const [items, setItems] = useState<AboutUsData[]>([]);
+  const [formData, setFormData] = useState<Partial<AboutUsData>>({ about: '' });
   const [message, setMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -13,9 +14,10 @@ const AboutUsPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchAboutUs();
+        const data: ApiResponse[] = await fetchAboutUs();
         if (Array.isArray(data)) {
-          setItems(data);
+          const aboutData = data.map(item => item.about); // Extract the `about` field
+          setItems(aboutData);
         } else {
           console.error('Unexpected data format:', data);
           setItems([]);
@@ -54,15 +56,18 @@ const AboutUsPage = () => {
         setMessage('Resource created successfully!');
       }
       setIsModalOpen(false);
-      const data = await fetchAboutUs();
-      setItems(data);
+      const data: ApiResponse[] = await fetchAboutUs();
+      if (Array.isArray(data)) {
+        const aboutData = data.map(item => item.about); // Extract the `about` field
+        setItems(aboutData);
+      }
     } catch (error) {
       console.error('Operation failed:', error);
       setMessage('Failed to perform operation.');
     }
   };
 
-  const handleEdit = (item: any) => {
+  const handleEdit = (item: AboutUsData) => {
     setFormData(item);
     setCurrentId(item.id);
     setIsEditing(true);
@@ -73,8 +78,11 @@ const AboutUsPage = () => {
     try {
       await deleteAboutUs(id);
       setMessage('Resource deleted successfully!');
-      const data = await fetchAboutUs();
-      setItems(data);
+      const data: ApiResponse[] = await fetchAboutUs();
+      if (Array.isArray(data)) {
+        const aboutData = data.map(item => item.about); // Extract the `about` field
+        setItems(aboutData);
+      }
     } catch (error) {
       console.error('Deletion failed:', error);
       setMessage('Failed to delete resource.');

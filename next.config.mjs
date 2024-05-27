@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'maindoclinicsystem.pythonanywhere.com/',
+        hostname: 'maindoclinicsystem.pythonanywhere.com',
         pathname: '/**',
       },
       {
@@ -29,5 +29,5 @@ const nextConfig = {
     NEXT_PUBLIC_BASE_API: process.env.NEXT_PUBLIC_BASE_API,
   },
 };
-  
-  export default nextConfig;
+
+export default nextConfig;

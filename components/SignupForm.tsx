@@ -39,7 +39,7 @@ const SignupForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-500">
+    <div className="flex items-center justify-center min-h-screen ">
       <Transition
         show={loading}
         enter="transition-opacity duration-300"
@@ -89,7 +89,7 @@ const SignupForm = () => {
           </button>
         </form>
         <div className="mt-6 text-center">
-          <Link href="/login">
+          <Link href="/Login">
             <span className="text-blue-500 hover:underline cursor-pointer">Already have an account? Log in</span>
           </Link>
         </div>

@@ -19,13 +19,13 @@ const ForgotPasswordForm = () => {
       setError('');
       setLoading(false);
       alert('Password reset email sent successfully.');
-      router.push('/login');
+      router.push('/Login');
     } catch (err) {
       setError('Failed to send password reset email. Please try again.');
       setMessage('');
       setLoading(false);
-      alert('Failed to send password reset email. Please try again.');
-      router.push('/signup');
+      alert('Please try to sign-up again.');
+      router.push('/Signup');
     }
   };
 

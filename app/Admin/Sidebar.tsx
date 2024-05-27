@@ -8,7 +8,8 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ setActiveComponent, activeComponent }) => {
   return (
-    <div className="w-64 bg-white shadow-md min-h-screen">
+    <div className="w-64 bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900
+    shadow-md min-h-screen">
       <nav className="p-4">
         <ul>
           <li

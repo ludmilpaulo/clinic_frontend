@@ -2,9 +2,18 @@ import { useEffect, useState } from 'react';
 import ModalForm from './ModalForm';
 import { fetchTeams, createTeam, updateTeam, deleteTeam } from '@/services/adminService';
 
+// Define the Team type
+interface Team {
+  id: number;
+  name: string;
+  position: string;
+  description: string;
+  image_url: string;
+}
+
 const TeamsPage = () => {
-  const [items, setItems] = useState<any[]>([]);
-  const [formData, setFormData] = useState<any>({});
+  const [items, setItems] = useState<Team[]>([]);
+  const [formData, setFormData] = useState<Partial<Team>>({});
   const [message, setMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -44,7 +53,7 @@ const TeamsPage = () => {
     }
   };
 
-  const handleEdit = (item: any) => {
+  const handleEdit = (item: Team) => {
     setFormData(item);
     setCurrentId(item.id);
     setIsEditing(true);

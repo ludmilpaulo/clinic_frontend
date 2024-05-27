@@ -46,7 +46,8 @@ const Layout: React.FC = () => {
   return (
     <div className="flex">
       <Sidebar setActiveComponent={setActiveComponent} activeComponent={activeComponent} />
-      <main className="flex-1 p-4 bg-gray-100 min-h-screen">{componentToRender}</main>
+      <main className="flex-1 p-4 bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900
+min-h-screen">{componentToRender}</main>
     </div>
   );
 };

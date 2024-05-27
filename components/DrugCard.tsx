@@ -40,8 +40,9 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
   if (!drug || drug.quantity_available <= 0) return null; // Don't display if drug is undefined or quantity is less than or equal to 0
 
   return (
-    <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-4">
-      <div className="h-48 relative rounded-t-lg overflow-hidden">
+    <div className="relative bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-4">
+      <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+      <div className="relative h-48 rounded-t-lg overflow-hidden">
         {drug.image_urls && drug.image_urls[currentImageIndex] ? (
           <Image
             src={drug.image_urls[currentImageIndex]}
@@ -56,10 +57,10 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
           </div>
         )}
       </div>
-      <div className="p-4">
+      <div className="relative p-4">
         <div className="mb-2 flex items-center justify-between">
-          <p className="font-semibold text-lg">{drug.name}</p>
-          <p className="font-semibold text-lg">R{drug.price}</p>
+          <p className="font-semibold text-lg text-gray-900">{drug.name}</p>
+          <p className="font-semibold text-lg text-gray-900">R{drug.price}</p>
         </div>
        
         {drug.quantity_available < 10 && (
@@ -68,7 +69,7 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
           </p>
         )}
       </div>
-      <div className="flex justify-between items-center p-4">
+      <div className="relative flex justify-between items-center p-4">
         {inCart ? (
           <div className="flex space-x-2 items-center">
             <button
@@ -94,7 +95,7 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
           </button>
         )}
       </div>
-      <div className="p-4">
+      <div className="relative p-4">
         {inCart ? (
           <Link
             href="/CartPage"

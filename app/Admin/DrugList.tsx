@@ -3,10 +3,19 @@ import DrugForm from './DrugForm';
 import { deleteDrug, fetchDrugs } from '@/services/adminService';
 import Image from 'next/image';
 
+// Define the Drug type
+interface Drug {
+  id: number;
+  name: string;
+  category_name: string;
+  price: number;
+  image_urls: string[];
+}
+
 const DrugList: React.FC = () => {
-  const [drugs, setDrugs] = useState<any[]>([]);
+  const [drugs, setDrugs] = useState<Drug[]>([]);
   const [showPopup, setShowPopup] = useState(false);
-  const [currentDrug, setCurrentDrug] = useState<any>(null);
+  const [currentDrug, setCurrentDrug] = useState<Drug | null>(null);
 
   useEffect(() => {
     async function loadDrugs() {
@@ -19,7 +28,7 @@ const DrugList: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     await deleteDrug(id);
-    setDrugs(drugs.filter((drug: any) => drug.id !== id));
+    setDrugs(drugs.filter((drug) => drug.id !== id));
   };
 
   const handleAddDrug = () => {
@@ -27,7 +36,7 @@ const DrugList: React.FC = () => {
     setShowPopup(true);
   };
 
-  const handleEditDrug = (drug: any) => {
+  const handleEditDrug = (drug: Drug) => {
     setCurrentDrug(drug);
     setShowPopup(true);
   };
@@ -56,7 +65,7 @@ const DrugList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {drugs.map((drug: any) => (
+          {drugs.map((drug) => (
             <tr key={drug.id} className="border-b">
               <td className="px-4 py-2">
                 {drug.image_urls && drug.image_urls.length > 0 && (

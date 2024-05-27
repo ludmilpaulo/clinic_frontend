@@ -138,7 +138,7 @@ export const fetchLocationStatistics = async () => {
 
 export const fetchUsers = async () => {
   try {
-    const response = await axios.get('/users/');
+    const response = await axios.get(`${baseAPI}/account/users/`);
     return response.data;
   } catch (error) {
     handleError(error);

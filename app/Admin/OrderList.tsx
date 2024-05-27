@@ -2,8 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { fetchOrders, updateOrderStatus } from '@/services/adminService';
 import { Transition } from '@headlessui/react';
 
+// Define the Order type
+interface Order {
+  id: number;
+  user: {
+    username: string;
+  };
+  total_price: number;
+  status: string;
+  created_at: string;
+}
+
 const OrderList: React.FC = () => {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<string | null>(null);
 
@@ -21,7 +32,7 @@ const OrderList: React.FC = () => {
 
   const handleStatusChange = async (orderId: number, newStatus: string) => {
     const order = orders.find(order => order.id === orderId);
-    if (order.status === 'Completed' || order.status === 'Cancelled') {
+    if (order && (order.status === 'Completed' || order.status === 'Cancelled')) {
       setAlert('This order is already marked as Completed or Cancelled. Please contact the admin to make changes.');
       setTimeout(() => setAlert(null), 5000);
       return;

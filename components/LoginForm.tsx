@@ -43,7 +43,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-500">
+    <div className="flex items-center justify-center min-h-screen ">
       <Transition
         show={loading}
         enter="transition-opacity duration-300"

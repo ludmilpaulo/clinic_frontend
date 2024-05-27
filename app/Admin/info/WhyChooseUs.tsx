@@ -2,9 +2,16 @@ import { useEffect, useState } from 'react';
 import ModalForm from './ModalForm';
 import { fetchWhyChooseUs, createWhyChooseUs, updateWhyChooseUs, deleteWhyChooseUs } from '@/services/adminService';
 
+// Define the WhyChooseUs type
+interface WhyChooseUs {
+  id: number;
+  title: string;
+  description: string;
+}
+
 const WhyChooseUsPage = () => {
-  const [items, setItems] = useState<any[]>([]);
-  const [formData, setFormData] = useState<any>({});
+  const [items, setItems] = useState<WhyChooseUs[]>([]);
+  const [formData, setFormData] = useState<Partial<WhyChooseUs>>({});
   const [message, setMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -44,7 +51,7 @@ const WhyChooseUsPage = () => {
     }
   };
 
-  const handleEdit = (item: any) => {
+  const handleEdit = (item: WhyChooseUs) => {
     setFormData(item);
     setCurrentId(item.id);
     setIsEditing(true);

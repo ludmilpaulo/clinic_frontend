@@ -6,9 +6,24 @@ import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import thunk from "redux-thunk";
 
+const isServer = typeof window === "undefined";
+
+// Noop storage for SSR
+const noopStorage = {
+  getItem(_key: any) {
+    return Promise.resolve(null);
+  },
+  setItem(_key: any, value: any) {
+    return Promise.resolve(value);
+  },
+  removeItem(_key: any) {
+    return Promise.resolve();
+  },
+};
+
 const rootPersistConfig = {
   key: "root",
-  storage,
+  storage: isServer ? noopStorage : storage,
 };
 
 const rootReducer = combineReducers({
@@ -23,6 +38,9 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
+      thunk: {
+        extraArgument: { storage: isServer ? noopStorage : storage },
+      },
     }),
 });
 

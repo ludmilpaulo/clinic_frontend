@@ -2,9 +2,18 @@ import { useEffect, useState } from 'react';
 import ModalForm from './ModalForm';
 import { fetchContacts, createContact, updateContact, deleteContact } from '@/services/adminService';
 
+// Define the Contact type
+interface Contact {
+  id: number;
+  subject: string;
+  email: string;
+  phone: string;
+  message: string;
+}
+
 const ContactsPage = () => {
-  const [items, setItems] = useState<any[]>([]);
-  const [formData, setFormData] = useState<any>({});
+  const [items, setItems] = useState<Contact[]>([]);
+  const [formData, setFormData] = useState<Partial<Contact>>({});
   const [message, setMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -44,7 +53,7 @@ const ContactsPage = () => {
     }
   };
 
-  const handleEdit = (item: any) => {
+  const handleEdit = (item: Contact) => {
     setFormData(item);
     setCurrentId(item.id);
     setIsEditing(true);
