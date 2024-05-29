@@ -5,6 +5,7 @@ import { baseAPI } from '@/utils/variables';
 import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 import { selectUser } from '@/redux/slices/authSlice';
+import withAuth from '@/components/PrivateRoute';
 
 interface OrderItem {
   id: number;
@@ -191,4 +192,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default withAuth(ProfilePage);

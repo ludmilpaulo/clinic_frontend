@@ -58,6 +58,15 @@ export const createDrug = async (drugData: FormData) => {
   }
 };
 
+export const fetchCategories = async () => {
+  try {
+    const response = await axios.get(`${baseAPI}/pharmacy/categories/`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 export const updateDrug = async (id: number, drugData: FormData) => {
   try {
     const response = await axios.put(`${baseAPI}/pharmacy/pharmacy/detail/${id}/`, drugData, {

@@ -1,8 +1,23 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Sidebar from './Sidebar';
-import withStaff from '@/hoc/withStaff';
+import { useRouter } from 'next/navigation';
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { getCurrentUser } from '@/services/authService';
+import { Transition } from '@headlessui/react';
+import { logoutUser } from '@/redux/slices/authSlice';
+import withAuth from '@/components/PrivateRoute';
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  is_superuser: boolean;
+  is_staff: boolean;
+  is_active: boolean;
+}
+
 
 const UserList = dynamic(() => import('./UserList'), { ssr: false });
 const OrderList = dynamic(() => import('./OrderList'), { ssr: false });
@@ -12,8 +27,44 @@ const Revenue = dynamic(() => import('./Revenue'), { ssr: false });
 const UserStatistics = dynamic(() => import('./UserStatistics'), { ssr: false });
 const LocationStatistics = dynamic(() => import('./LocationStatistics'), { ssr: false });
 
+
+
 const Layout: React.FC = () => {
-  const [activeComponent, setActiveComponent] = useState('users');
+  const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<User | null>(null);
+    const router = useRouter();
+    const dispatch = useDispatch();
+
+  
+  const auth_user = useSelector((state: RootState) => state.auth.user);
+
+    useEffect(() => {
+      const token = auth_user?.token;
+      if (!token) {
+        router.push('/Login');
+        return;
+      }
+
+      getCurrentUser(token)
+      .then((data) => {
+        if (!data.is_staff) {
+          alert('Only staff members are allowed on this page');
+          dispatch(logoutUser());
+          router.push('/Login');
+        } else {
+          console.log("user data", data);
+          setUser(data);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        dispatch(logoutUser());
+        router.push('/Login');
+      });
+  }, [auth_user, router, dispatch]);
+
+    const [activeComponent, setActiveComponent] = useState('orders');
+
 
   let componentToRender;
   switch (activeComponent) {
@@ -52,4 +103,4 @@ min-h-screen">{componentToRender}</main>
   );
 };
 
-export default Layout;
+export default withAuth(Layout);

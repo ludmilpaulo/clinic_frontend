@@ -3,27 +3,30 @@ import { baseAPI } from '@/utils/variables';
 
 const API_URL = `${baseAPI}/account`;
 
+
+
 export const signup = async (username: string, email: string, password: string) => {
   try {
     const response = await axios.post(`${API_URL}/signup/`, { username, email, password });
     return response.data;
   } catch (error) {
-    if (isAxiosError(error)) {
-      throw error.response?.data;
+    if (axios.isAxiosError(error) && error.response) {
+      return error.response.data;  // Return the error response data
     }
-    throw error;
+    return { error: 'An unexpected error occurred. Please try again.' };
   }
 };
+
 
 export const login = async (username: string, password: string) => {
   try {
     const response = await axios.post(`${API_URL}/login/`, { username, password });
     return response.data;
   } catch (error) {
-    if (isAxiosError(error)) {
-      throw error.response?.data;
+    if (axios.isAxiosError(error) && error.response) {
+      return error.response.data;
     }
-    throw error;
+    return { error: 'An unexpected error occurred. Please try again.' };
   }
 };
 
