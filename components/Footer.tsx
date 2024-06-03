@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data: ApiResponse | null = await fetchAboutUsData();
-      if (data) {
+      if (data && Array.isArray(data) && data.length > 0) {
         setHeaderData(data[0]);
       }
     };

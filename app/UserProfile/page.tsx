@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 import { baseAPI } from '@/utils/variables';
 import { RootState } from '@/redux/store';
-import { useSelector } from 'react-redux';
 import { selectUser } from '@/redux/slices/authSlice';
 import withAuth from '@/components/PrivateRoute';
 
@@ -38,24 +38,45 @@ interface UserProfile {
 const ProfilePage = () => {
   const auth = useSelector((state: RootState) => selectUser(state));
   const token = auth?.token;
+  const userId = auth?.user_id;
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    // Fetch user data from API
-    axios.get(`${baseAPI}/account/user`)
-      .then(response => setUser(response.data))
+    if (token && userId) {
+      axios.get(`${baseAPI}/account/account/profile/${userId}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        const userData = response.data;
+        axios.get(`${baseAPI}/account/orders/user/${userId}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then(orderResponse => {
+          setUser({ ...userData, orders: orderResponse.data });
+        })
+        .catch(error => console.error('Failed to fetch user orders:', error));
+      })
       .catch(error => console.error('Failed to fetch user data:', error));
-  }, []);
+    }
+  }, [token, userId]);
 
   const handleUpdateProfile = () => {
-    if (user) {
-      axios.put(`${baseAPI}/account/user`, user)
-        .then(response => {
-          setUser(response.data);
-          setIsEditing(false);
-        })
-        .catch(error => console.error('Failed to update user data:', error));
+    if (user && token) {
+      axios.put(`${baseAPI}/account/account/update/${userId}/`, user, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        setUser(response.data);
+        setIsEditing(false);
+      })
+      .catch(error => console.error('Failed to update user data:', error));
     }
   };
 
@@ -170,21 +191,31 @@ const ProfilePage = () => {
             </tr>
           </thead>
           <tbody>
-            {user.orders.map((order) => (
-              <tr key={order.id}>
-                <td className="p-2 border-b">{order.id}</td>
-                <td className="p-2 border-b">{new Date(order.created_at).toLocaleDateString()}</td>
-                <td className="p-2 border-b">{order.status}</td>
-                <td className="p-2 border-b">
-                  <span
-                    className="text-blue-500 cursor-pointer"
-                    onClick={() => window.location.href = order.invoice}
-                  >
-                    Download
-                  </span>
-                </td>
+            {user.orders && user.orders.length > 0 ? (
+              user.orders.map((order: Order) => (
+                <tr key={order.id}>
+                  <td className="p-2 border-b">{order.id}</td>
+                  <td className="p-2 border-b">{new Date(order.created_at).toLocaleDateString()}</td>
+                  <td className="p-2 border-b">{order.status}</td>
+                  <td className="p-2 border-b">
+                    {order.invoice ? (
+                      <span
+                        className="text-blue-500 cursor-pointer"
+                        onClick={() => window.location.href = order.invoice}
+                      >
+                        Download
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">No Invoice</span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="p-2 text-center text-gray-500">No orders found.</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

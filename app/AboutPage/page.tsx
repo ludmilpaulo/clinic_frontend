@@ -74,19 +74,7 @@ const AboutPage: React.FC = () => {
                     <SocialIcon url={data.instagram} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
                 </div>
-                <div className="w-full md:w-2/3 lg:w-1/2 mt-6">
-                  <h2 className="text-2xl font-bold mb-4 text-gray-800">Testimonials</h2>
-                  {data.testimonials && data.testimonials.length > 0 ? (
-                    data.testimonials.map((testimonial: any) => (
-                      <div key={testimonial.author} className="mb-6 p-4 bg-gray-100 rounded-lg shadow-md">
-                        <p className="text-gray-700 italic">{"&quot;" + testimonial.content + "&quot;"}</p>
-                        <p className="text-gray-900 font-semibold mt-2">- {testimonial.author}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-700">No testimonials available.</p>
-                  )}
-                </div>
+              
               </div>
             </div>
           )}

@@ -1,127 +1,192 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import DrugForm from './DrugForm';
-import { deleteDrug, fetchDrugs } from '@/services/adminService';
-import Image from 'next/image';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { selectUser } from '@/redux/slices/authSlice';
+import { RootState } from "@/redux/store";
+import { useSelector } from 'react-redux';
+import { Transition } from '@headlessui/react';
+import { updateDrug, createDrug, fetchCategories } from '@/services/adminService';
 
-// Define the Drug type
-interface Drug {
+interface Category {
   id: number;
   name: string;
-  category_name: string;
-  price: number;
-  quantity_available: number;
-  image_urls: string[];
 }
 
-const DrugList: React.FC = () => {
-  const [drugs, setDrugs] = useState<Drug[]>([]);
-  const [showPopup, setShowPopup] = useState(false);
-  const [currentDrug, setCurrentDrug] = useState<Drug | null>(null);
+interface DrugFormProps {
+  drug?: any;
+  onClose: () => void;
+  loadDrugs: () => void;
+}
 
-  const loadDrugs = useCallback(async () => {
-    const data = await fetchDrugs();
-    setDrugs(data);
-  }, []);
+const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
+  const [name, setName] = useState(drug?.name || '');
+  const [category, setCategory] = useState(drug?.category || '');
+  const [description, setDescription] = useState(drug?.description || '');
+  const [price, setPrice] = useState(drug?.price || '');
+  const [quantity, setQuantity] = useState(drug?.quantity_available || '');
+  const [images, setImages] = useState<FileList | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const router = useRouter();
+
+  const user = useSelector((state: RootState) => selectUser(state));
+  const token = user?.token;
 
   useEffect(() => {
-    loadDrugs();
-  }, [loadDrugs]);
-
-  const handleDelete = useCallback(async (id: number) => {
-    await deleteDrug(id);
-    setDrugs((prevDrugs) => prevDrugs.filter((drug) => drug.id !== id));
+    const fetchData = async () => {
+      const fetchedCategories: Category[] = await fetchCategories();
+      setCategories(fetchedCategories);
+    };
+    fetchData();
   }, []);
 
-  const handleAddDrug = useCallback(() => {
-    setCurrentDrug(null);
-    setShowPopup(true);
-  }, []);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('category', category);
+    formData.append('description', description);
+    formData.append('price', price);
+    formData.append('quantity_available', quantity);
+    if (images) {
+      for (let i = 0; i < images.length; i++) {
+        formData.append('images', images[i]);
+      }
+    }
 
-  const handleEditDrug = useCallback((drug: Drug) => {
-    setCurrentDrug(drug);
-    setShowPopup(true);
-  }, []);
-
-  const closeModal = useCallback(() => {
-    setShowPopup(false);
-    loadDrugs();  // Reload the drug list when the modal closes
-  }, [loadDrugs]);
-
-  const drugList = useMemo(() => {
-    return drugs.map((drug) => (
-      <tr key={drug.id} className="border-b">
-        <td className="px-4 py-2">
-          {drug.image_urls && drug.image_urls.length > 0 && (
-            <Image
-              src={drug.image_urls[0]}
-              alt={drug.name}
-              width={64}
-              height={64}
-              className="object-cover rounded"
-            />
-          )}
-        </td>
-        <td className="px-4 py-2">{drug.name}</td>
-        <td className="px-4 py-2">{drug.category_name}</td>
-        <td className="px-4 py-2">{drug.price}</td>
-        <td className="px-4 py-2">{drug.quantity_available}</td>
-        <td className="px-4 py-2">
-          <button
-            className="bg-green-500 text-white px-4 py-2 mr-2 rounded"
-            onClick={() => handleEditDrug(drug)}
-          >
-            Edit
-          </button>
-          <button
-            className="bg-red-500 text-white px-4 py-2 rounded"
-            onClick={() => handleDelete(drug.id)}
-          >
-            Delete
-          </button>
-        </td>
-      </tr>
-    ));
-  }, [drugs, handleEditDrug, handleDelete]);
+    try {
+      if (drug) {
+        await updateDrug(drug.id, formData);
+      } else {
+        await createDrug(formData);
+      }
+      setLoading(false);
+      alert('Drug successfully added/updated.');
+      onClose();
+      loadDrugs();
+    } catch (error) {
+      setLoading(false);
+      alert('Failed to add/update drug. Please try again.');
+    }
+  };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Products</h1>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 mb-4 rounded"
-        onClick={handleAddDrug}
+    <div className="relative">
+      <Transition
+        show={loading}
+        enter="transition-opacity duration-300"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-300"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
       >
-        Add New Product
-      </button>
-      <table className="w-full table-auto bg-white shadow-md rounded">
-        <thead>
-          <tr className="bg-gray-200 text-left">
-            <th className="px-4 py-2">Image</th>
-            <th className="px-4 py-2">Name</th>
-            <th className="px-4 py-2">Category</th>
-            <th className="px-4 py-2">Price</th>
-            <th className="px-4 py-2">Quantity Available</th>
-            <th className="px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {drugList}
-        </tbody>
-      </table>
-      {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-auto">
-          <div className="bg-white p-8 rounded shadow-md w-1/2 overflow-auto max-h-full">
-            <button
-              className="bg-red-500 text-white px-4 py-2 rounded mb-4"
-              onClick={closeModal}
-            >
-              Close
-            </button>
-            <DrugForm drug={currentDrug} onClose={closeModal} loadDrugs={loadDrugs} />
-          </div>
+        <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+          <div className="w-16 h-16 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>
         </div>
-      )}
+      </Transition>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
+            Category
+          </label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          >
+            <option value="">Select a category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.name}>{cat.name}</option>
+            ))}
+          </select>
+          <input
+            id="new-category"
+            type="text"
+            placeholder="Or type a new category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-2"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+            Description
+          </label>
+          <CKEditor
+            editor={ClassicEditor}
+            data={description}
+            onChange={(event, editor) => {
+              const data = editor.getData();
+              setDescription(data);
+            }}
+            config={{
+              toolbar: [
+                'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|', 'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', '|', 'undo', 'redo'
+              ],
+            }}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
+            Price
+          </label>
+          <input
+            id="price"
+            type="text"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="quantity">
+            Quantity Available
+          </label>
+          <input
+            id="quantity"
+            type="text"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="images">
+            Images
+          </label>
+          <input
+            id="images"
+            type="file"
+            multiple
+            onChange={(e) => setImages(e.target.files)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          {drug ? 'Update Product' : 'Add Product'}
+        </button>
+      </form>
     </div>
   );
 };
 
-export default DrugList;
+export default DrugForm;

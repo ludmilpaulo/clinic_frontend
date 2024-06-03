@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import DrugForm from './DrugForm';
 import { deleteDrug, fetchDrugs } from '@/services/adminService';
 import Image from 'next/image';
@@ -8,7 +8,6 @@ interface Drug {
   id: number;
   name: string;
   category_name: string;
-  category: string;
   price: number;
   quantity_available: number;
   image_urls: string[];
@@ -18,70 +17,43 @@ const DrugList: React.FC = () => {
   const [drugs, setDrugs] = useState<Drug[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [currentDrug, setCurrentDrug] = useState<Drug | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const loadDrugs = useCallback(async () => {
-    const data = await fetchDrugs();
-    setDrugs(data);
-  }, []);
+  const loadData = async () => {
+    try {
+      const drugsData = await fetchDrugs();
+      setDrugs(drugsData);
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    loadDrugs();
-  }, [loadDrugs]);
-
-  const handleDelete = useCallback(async (id: number) => {
-    await deleteDrug(id);
-    setDrugs((prevDrugs) => prevDrugs.filter((drug) => drug.id !== id));
+    loadData();
   }, []);
 
-  const handleAddDrug = useCallback(() => {
+  const handleDelete = async (id: number) => {
+    await deleteDrug(id);
+    setDrugs(drugs.filter((drug) => drug.id !== id));
+  };
+
+  const handleAddDrug = () => {
     setCurrentDrug(null);
     setShowPopup(true);
-  }, []);
+  };
 
-  const handleEditDrug = useCallback((drug: Drug) => {
+  const handleEditDrug = (drug: Drug) => {
     setCurrentDrug(drug);
     setShowPopup(true);
-  }, []);
+  };
 
-  const closeModal = useCallback(() => {
+  const closeModal = () => {
     setShowPopup(false);
-  }, []);
-
-  const drugList = useMemo(() => {
-    return drugs.map((drug) => (
-      <tr key={drug.id} className="border-b">
-        <td className="px-4 py-2">
-          {drug.image_urls && drug.image_urls.length > 0 && (
-            <Image
-              src={drug.image_urls[0]}
-              alt={drug.name}
-              width={64}
-              height={64}
-              className="object-cover rounded"
-            />
-          )}
-        </td>
-        <td className="px-4 py-2">{drug.name}</td>
-        <td className="px-4 py-2">{drug.category_name}</td>
-        <td className="px-4 py-2">{drug.price}</td>
-        <td className="px-4 py-2">{drug.quantity_available}</td>
-        <td className="px-4 py-2">
-          <button
-            className="bg-green-500 text-white px-4 py-2 mr-2 rounded"
-            onClick={() => handleEditDrug(drug)}
-          >
-            Edit
-          </button>
-          <button
-            className="bg-red-500 text-white px-4 py-2 rounded"
-            onClick={() => handleDelete(drug.id)}
-          >
-            Delete
-          </button>
-        </td>
-      </tr>
-    ));
-  }, [drugs, handleEditDrug, handleDelete]);
+    loadData();
+  };
 
   return (
     <div>
@@ -104,7 +76,39 @@ const DrugList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {drugList}
+          {drugs.map((drug) => (
+            <tr key={drug.id} className="border-b">
+              <td className="px-4 py-2">
+                {drug.image_urls && drug.image_urls.length > 0 && (
+                  <Image
+                    src={drug.image_urls[0]}
+                    alt={drug.name}
+                    width={64}
+                    height={64}
+                    className="object-cover rounded"
+                  />
+                )}
+              </td>
+              <td className="px-4 py-2">{drug.name}</td>
+              <td className="px-4 py-2">{drug.category_name}</td>
+              <td className="px-4 py-2">{drug.price}</td>
+              <td className="px-4 py-2">{drug.quantity_available}</td>
+              <td className="px-4 py-2">
+                <button
+                  className="bg-green-500 text-white px-4 py-2 mr-2 rounded"
+                  onClick={() => handleEditDrug(drug)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="bg-red-500 text-white px-4 py-2 rounded"
+                  onClick={() => handleDelete(drug.id)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
       {showPopup && (
@@ -112,11 +116,11 @@ const DrugList: React.FC = () => {
           <div className="bg-white p-8 rounded shadow-md w-1/2 overflow-auto max-h-full">
             <button
               className="bg-red-500 text-white px-4 py-2 rounded mb-4"
-              onClick={closeModal}
+              onClick={() => setShowPopup(false)}
             >
               Close
             </button>
-            <DrugForm drug={currentDrug} onClose={closeModal} />
+            <DrugForm drug={currentDrug} onClose={closeModal} loadDrugs={loadData} />
           </div>
         </div>
       )}
