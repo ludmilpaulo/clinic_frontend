@@ -117,7 +117,7 @@ const DrugPage: React.FC = () => {
                 </div>
                 <div className="w-full md:w-1/2 md:pl-6">
                   <h1 className="text-2xl font-bold mb-2">{drug.name}</h1>
-                  <p className="text-lg font-semibold text-gray-700 mb-4">{drug.price} Kz</p>
+                  <p className="text-lg font-semibold text-gray-700 mb-4">R{drug.price}</p>
                   <p className="text-gray-600 mb-2"><strong>Category:</strong> {drug.category_name}</p>
                   <div className="text-gray-600 mb-4" dangerouslySetInnerHTML={{ __html: drug.description }} />
                   {drug.quantity_available < 10 && (
