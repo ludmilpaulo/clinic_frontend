@@ -67,7 +67,7 @@ const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ onSubmit, loadi
         className="mb-4 w-full p-2 border rounded"
         required
       />
-      <input 
+      <input
         type="text"
         name="city"
         value={form.city}
@@ -76,7 +76,7 @@ const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ onSubmit, loadi
         className="mb-4 w-full p-2 border rounded"
         required
       />
-      <input 
+      <input
         type="text"
         name="postalCode"
         value={form.postalCode}
@@ -85,7 +85,7 @@ const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ onSubmit, loadi
         className="mb-4 w-full p-2 border rounded"
         required
       />
-      <input 
+      <input
         type="text"
         name="country"
         value={form.country}
@@ -94,12 +94,6 @@ const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ onSubmit, loadi
         className="mb-4 w-full p-2 border rounded"
         required
       />
-      <button
-        type="submit"
-        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors duration-300"
-      >
-        {loading ? 'Processing...' : 'Place Order'}
-      </button>
     </form>
   );
 };
