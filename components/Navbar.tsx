@@ -158,7 +158,7 @@ const Navbar: React.FC = () => {
               </Link>
               <button
                 onClick={toggleMenu}
-                className="text-gray-800 focus:outline-none"
+                className="text-white focus:outline-none"
               >
                 <FaBars />
               </button>
