@@ -59,6 +59,10 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const handleMenuItemClick = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <>
       <nav className="bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900 shadow-lg fixed w-full z-10 top-0">
@@ -146,7 +150,6 @@ const Navbar: React.FC = () => {
                 {cartItemCount > 0 && (
                   <span className="hover:text-gray-600 flex items-center relative cursor-pointer mr-4">
                     <FaShoppingCart />
-
                     <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs px-1">
                       {cartItemCount}
                     </span>
@@ -166,36 +169,54 @@ const Navbar: React.FC = () => {
           <div className="md:hidden bg-white shadow-lg">
             <div className="px-4 pt-2 pb-4">
               <Link href="/HomePage">
-                <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
+                <span
+                  className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer"
+                  onClick={handleMenuItemClick}
+                >
                   <FaHome className="mr-1" /> Home
                 </span>
               </Link>
               <Link href="/AboutPage">
-                <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
+                <span
+                  className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer"
+                  onClick={handleMenuItemClick}
+                >
                   <FaInfo className="mr-1" /> About
                 </span>
               </Link>
               <Link href="/ContactPage">
-                <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
+                <span
+                  className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer"
+                  onClick={handleMenuItemClick}
+                >
                   <FaEnvelope className="mr-1" /> Contact
                 </span>
               </Link>
               {user?.is_staff && (
                 <Link href="/Admin">
-                  <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
+                  <span
+                    className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer"
+                    onClick={handleMenuItemClick}
+                  >
                     <FaUser className="mr-1" /> Staff Profile
                   </span>
                 </Link>
               )}
               {user ? (
                 <Link href="/UserProfile">
-                  <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
+                  <span
+                    className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer"
+                    onClick={handleMenuItemClick}
+                  >
                     <FaUser className="mr-1" /> Profile
                   </span>
                 </Link>
               ) : (
                 <Link href="/Login">
-                  <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
+                  <span
+                    className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer"
+                    onClick={handleMenuItemClick}
+                  >
                     <FaSignInAlt className="mr-1" /> Login
                   </span>
                 </Link>
