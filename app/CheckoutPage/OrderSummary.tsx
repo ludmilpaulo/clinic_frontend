@@ -22,7 +22,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ totalPrice }) => {
             <div key={item.id} className="flex justify-between items-center mb-4">
               <div>
                 <h3 className="text-lg font-semibold">{item.name}</h3>
-                <p className="text-gray-600">{(item.quantity ?? 1)} x {item.price} Kz</p>
+                <p className="text-gray-600">R{(item.quantity ?? 1)} x {item.price} </p>
                 <div className="flex items-center space-x-2 mt-2">
                   <button 
                     onClick={() => dispatch(decreaseBasket(item.id))} 
@@ -45,13 +45,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ totalPrice }) => {
                   </button>
                 </div>
               </div>
-              <p className="text-lg font-semibold">{(item.price * (item.quantity ?? 1)).toFixed(2)} Kz</p>
+              <p className="text-lg font-semibold">R{(item.price * (item.quantity ?? 1)).toFixed(2)}</p>
             </div>
           ))}
           <div className="border-t pt-4 mt-4">
             <div className="flex justify-between items-center mb-2">
               <p className="text-lg font-semibold">Total</p>
-              <p className="text-2xl font-bold">{totalPrice.toFixed(2)} Kz</p>
+              <p className="text-2xl font-bold">R{totalPrice.toFixed(2)} </p>
             </div>
             <div className="flex justify-between items-center text-gray-600 text-sm">
               <p className="flex items-center">
@@ -59,12 +59,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ totalPrice }) => {
               </p>
               <p>Free</p>
             </div>
-            <div className="flex justify-between items-center text-gray-600 text-sm">
-              <p className="flex items-center">
-                <FaCreditCard className="mr-2" /> Payment Method
-              </p>
-              <p>Credit Card</p>
-            </div>
+           
             <div className="flex justify-between items-center text-gray-600 text-sm">
               <p className="flex items-center">
                 <FaLock className="mr-2" /> Secure Checkout
