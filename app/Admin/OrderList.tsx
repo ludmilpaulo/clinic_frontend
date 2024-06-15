@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { fetchOrders, updateOrderStatus } from '@/services/adminService';
-import { Transition } from '@headlessui/react';
+import React, { useEffect, useState } from "react";
+import { fetchOrders, updateOrderStatus } from "@/services/adminService";
+import { Transition } from "@headlessui/react";
 
 // Define the Order type
 interface Order {
@@ -31,9 +31,14 @@ const OrderList: React.FC = () => {
   }, []);
 
   const handleStatusChange = async (orderId: number, newStatus: string) => {
-    const order = orders.find(order => order.id === orderId);
-    if (order && (order.status === 'Completed' || order.status === 'Cancelled')) {
-      setAlert('This order is already marked as Completed or Cancelled. Please contact the admin to make changes.');
+    const order = orders.find((order) => order.id === orderId);
+    if (
+      order &&
+      (order.status === "Completed" || order.status === "Cancelled")
+    ) {
+      setAlert(
+        "This order is already marked as Completed or Cancelled. Please contact the admin to make changes.",
+      );
       setTimeout(() => setAlert(null), 5000);
       return;
     }
@@ -41,15 +46,15 @@ const OrderList: React.FC = () => {
     try {
       setLoading(true);
       await updateOrderStatus(orderId, { status: newStatus });
-      const updatedOrders = orders.map(order =>
-        order.id === orderId ? { ...order, status: newStatus } : order
+      const updatedOrders = orders.map((order) =>
+        order.id === orderId ? { ...order, status: newStatus } : order,
       );
       setOrders(updatedOrders);
       setLoading(false);
-      setAlert('Order status updated successfully!');
+      setAlert("Order status updated successfully!");
       setTimeout(() => setAlert(null), 5000);
     } catch (error) {
-      console.error('Failed to update order status:', error);
+      console.error("Failed to update order status:", error);
       setLoading(false);
     }
   };
@@ -59,7 +64,10 @@ const OrderList: React.FC = () => {
       <h1 className="text-2xl font-bold mb-4">Orders</h1>
 
       {alert && (
-        <div className="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3" role="alert">
+        <div
+          className="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
+          role="alert"
+        >
           <p className="font-bold">Notice</p>
           <p className="text-sm">{alert}</p>
         </div>

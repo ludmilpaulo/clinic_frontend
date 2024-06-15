@@ -1,8 +1,12 @@
-import { ComponentType } from 'react';
-import withAuth, { WithAuthProps } from './withAuth';
+import { ComponentType } from "react";
+import withAuth, { WithAuthProps } from "./withAuth";
 
-const withStaff = <P extends WithAuthProps>(WrappedComponent: ComponentType<P>) => {
-  const WithStaffComponent = (props: Omit<P, keyof WithAuthProps> & { user: WithAuthProps['user'] }) => {
+const withStaff = <P extends WithAuthProps>(
+  WrappedComponent: ComponentType<P>,
+) => {
+  const WithStaffComponent = (
+    props: Omit<P, keyof WithAuthProps> & { user: WithAuthProps["user"] },
+  ) => {
     const { user } = props;
 
     if (!user.is_staff) {

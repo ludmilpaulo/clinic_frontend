@@ -1,19 +1,22 @@
 "use client";
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import Head from 'next/head';
-import OrderSummary from './OrderSummary';
-import BillingDetailsForm from './BillingDetailsForm';
-import { Transition } from '@headlessui/react';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import Head from "next/head";
+import OrderSummary from "./OrderSummary";
+import BillingDetailsForm from "./BillingDetailsForm";
+import { Transition } from "@headlessui/react";
 
-import { selectCartItems } from '@/redux/slices/basketSlice';
+import { selectCartItems } from "@/redux/slices/basketSlice";
 
 const CheckoutPage: React.FC = () => {
   const cartItems = useSelector(selectCartItems);
   const [loading, setLoading] = useState(false);
   const [showBillingForm, setShowBillingForm] = useState(false);
 
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * (item.quantity ?? 1), 0);
+  const totalPrice = cartItems.reduce(
+    (acc, item) => acc + item.price * (item.quantity ?? 1),
+    0,
+  );
 
   const handlePlaceOrder = () => {
     setShowBillingForm(true);
@@ -41,7 +44,10 @@ const CheckoutPage: React.FC = () => {
             </div>
           )}
           {showBillingForm && (
-            <BillingDetailsForm totalPrice={totalPrice} setLoading={setLoading} />
+            <BillingDetailsForm
+              totalPrice={totalPrice}
+              setLoading={setLoading}
+            />
           )}
         </div>
       </div>

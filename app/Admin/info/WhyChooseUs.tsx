@@ -1,6 +1,11 @@
-import { useEffect, useState } from 'react';
-import ModalForm from './ModalForm';
-import { fetchWhyChooseUs, createWhyChooseUs, updateWhyChooseUs, deleteWhyChooseUs } from '@/services/adminService';
+import { useEffect, useState } from "react";
+import ModalForm from "./ModalForm";
+import {
+  fetchWhyChooseUs,
+  createWhyChooseUs,
+  updateWhyChooseUs,
+  deleteWhyChooseUs,
+} from "@/services/adminService";
 
 // Define the WhyChooseUs type
 interface WhyChooseUs {
@@ -12,7 +17,7 @@ interface WhyChooseUs {
 const WhyChooseUsPage = () => {
   const [items, setItems] = useState<WhyChooseUs[]>([]);
   const [formData, setFormData] = useState<Partial<WhyChooseUs>>({});
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState<number | null>(null);
@@ -25,7 +30,9 @@ const WhyChooseUsPage = () => {
     fetchData();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -37,17 +44,17 @@ const WhyChooseUsPage = () => {
     try {
       if (isEditing && currentId !== null) {
         await updateWhyChooseUs(currentId, formData);
-        setMessage('Resource updated successfully!');
+        setMessage("Resource updated successfully!");
       } else {
         await createWhyChooseUs(formData);
-        setMessage('Resource created successfully!');
+        setMessage("Resource created successfully!");
       }
       setIsModalOpen(false);
       const data = await fetchWhyChooseUs();
       setItems(data);
     } catch (error) {
-      console.error('Operation failed:', error);
-      setMessage('Failed to perform operation.');
+      console.error("Operation failed:", error);
+      setMessage("Failed to perform operation.");
     }
   };
 
@@ -61,12 +68,12 @@ const WhyChooseUsPage = () => {
   const handleDelete = async (id: number) => {
     try {
       await deleteWhyChooseUs(id);
-      setMessage('Resource deleted successfully!');
+      setMessage("Resource deleted successfully!");
       const data = await fetchWhyChooseUs();
       setItems(data);
     } catch (error) {
-      console.error('Deletion failed:', error);
-      setMessage('Failed to delete resource.');
+      console.error("Deletion failed:", error);
+      setMessage("Failed to delete resource.");
     }
   };
 
@@ -116,7 +123,7 @@ const WhyChooseUsPage = () => {
         onSubmit={handleSubmit}
         formData={formData}
         handleChange={handleChange}
-        title={isEditing ? 'Edit Why Choose Us' : 'Add Why Choose Us'}
+        title={isEditing ? "Edit Why Choose Us" : "Add Why Choose Us"}
       />
       {message && <p className="mt-4">{message}</p>}
     </div>

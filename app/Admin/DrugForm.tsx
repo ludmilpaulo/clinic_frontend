@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { selectUser } from '@/redux/slices/authSlice';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { selectUser } from "@/redux/slices/authSlice";
 import { RootState } from "@/redux/store";
-import { useSelector } from 'react-redux';
-import { Transition } from '@headlessui/react';
-import { updateDrug, createDrug, fetchCategories } from '@/services/adminService';
+import { useSelector } from "react-redux";
+import { Transition } from "@headlessui/react";
+import {
+  updateDrug,
+  createDrug,
+  fetchCategories,
+} from "@/services/adminService";
 
 interface Category {
   id: number;
@@ -20,11 +24,11 @@ interface DrugFormProps {
 }
 
 const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
-  const [name, setName] = useState(drug?.name || '');
-  const [category, setCategory] = useState(drug?.category || '');
-  const [description, setDescription] = useState(drug?.description || '');
-  const [price, setPrice] = useState(drug?.price || '');
-  const [quantity, setQuantity] = useState(drug?.quantity_available || '');
+  const [name, setName] = useState(drug?.name || "");
+  const [category, setCategory] = useState(drug?.category || "");
+  const [description, setDescription] = useState(drug?.description || "");
+  const [price, setPrice] = useState(drug?.price || "");
+  const [quantity, setQuantity] = useState(drug?.quantity_available || "");
   const [images, setImages] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -45,14 +49,14 @@ const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData();
-    formData.append('name', name);
-    formData.append('category', category);
-    formData.append('description', description);
-    formData.append('price', price);
-    formData.append('quantity_available', quantity);
+    formData.append("name", name);
+    formData.append("category", category);
+    formData.append("description", description);
+    formData.append("price", price);
+    formData.append("quantity_available", quantity);
     if (images) {
       for (let i = 0; i < images.length; i++) {
-        formData.append('images', images[i]);
+        formData.append("images", images[i]);
       }
     }
 
@@ -63,12 +67,12 @@ const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
         await createDrug(formData);
       }
       setLoading(false);
-      alert('Drug successfully added/updated.');
+      alert("Drug successfully added/updated.");
       onClose();
       loadDrugs();
     } catch (error) {
       setLoading(false);
-      alert('Failed to add/update drug. Please try again.');
+      alert("Failed to add/update drug. Please try again.");
     }
   };
 
@@ -89,7 +93,10 @@ const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
       </Transition>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="name"
+          >
             Name
           </label>
           <input
@@ -101,7 +108,10 @@ const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="category"
+          >
             Category
           </label>
           <select
@@ -112,7 +122,9 @@ const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
           >
             <option value="">Select a category</option>
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>{cat.name}</option>
+              <option key={cat.id} value={cat.name}>
+                {cat.name}
+              </option>
             ))}
           </select>
           <input
@@ -125,7 +137,10 @@ const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="description"
+          >
             Description
           </label>
           <CKEditor
@@ -137,13 +152,31 @@ const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
             }}
             config={{
               toolbar: [
-                'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|', 'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', '|', 'undo', 'redo'
+                "heading",
+                "|",
+                "bold",
+                "italic",
+                "link",
+                "bulletedList",
+                "numberedList",
+                "blockQuote",
+                "|",
+                "insertTable",
+                "tableColumn",
+                "tableRow",
+                "mergeTableCells",
+                "|",
+                "undo",
+                "redo",
               ],
             }}
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="price"
+          >
             Price
           </label>
           <input
@@ -155,7 +188,10 @@ const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="quantity">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="quantity"
+          >
             Quantity Available
           </label>
           <input
@@ -167,7 +203,10 @@ const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="images">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="images"
+          >
             Images
           </label>
           <input
@@ -182,7 +221,7 @@ const DrugForm: React.FC<DrugFormProps> = ({ drug, onClose, loadDrugs }) => {
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
-          {drug ? 'Update Product' : 'Add Product'}
+          {drug ? "Update Product" : "Add Product"}
         </button>
       </form>
     </div>

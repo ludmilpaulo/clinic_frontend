@@ -1,7 +1,7 @@
 // pages/profile.tsx
 
-import React from 'react';
-import ProfileForm from './ProfileForm';
+import React from "react";
+import ProfileForm from "./ProfileForm";
 
 interface ProfileProps {
   userId: number | null;
@@ -9,7 +9,6 @@ interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({ userId, username }) => {
-
   return (
     <>
       <h1 className="text-2xl font-bold mb-4">Profile</h1>

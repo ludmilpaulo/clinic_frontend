@@ -1,14 +1,14 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
-import Sidebar from './Sidebar';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import Sidebar from "./Sidebar";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { getCurrentUser } from '@/services/authService';
-import { Transition } from '@headlessui/react';
-import { logoutUser } from '@/redux/slices/authSlice';
-import withAuth from '@/components/PrivateRoute';
+import { getCurrentUser } from "@/services/authService";
+import { Transition } from "@headlessui/react";
+import { logoutUser } from "@/redux/slices/authSlice";
+import withAuth from "@/components/PrivateRoute";
 interface User {
   id: number;
   username: string;
@@ -18,39 +18,39 @@ interface User {
   is_active: boolean;
 }
 
-
-const UserList = dynamic(() => import('./UserList'), { ssr: false });
-const OrderList = dynamic(() => import('./OrderList'), { ssr: false });
-const SiteInfo = dynamic(() => import('./info/SiteInfo'));
-const DrugList = dynamic(() => import('./DrugList'), { ssr: false });
-const Revenue = dynamic(() => import('./Revenue'), { ssr: false });
-const UserStatistics = dynamic(() => import('./UserStatistics'), { ssr: false });
-const LocationStatistics = dynamic(() => import('./LocationStatistics'), { ssr: false });
-
-
+const UserList = dynamic(() => import("./UserList"), { ssr: false });
+const OrderList = dynamic(() => import("./OrderList"), { ssr: false });
+const SiteInfo = dynamic(() => import("./info/SiteInfo"));
+const DrugList = dynamic(() => import("./DrugList"), { ssr: false });
+const Revenue = dynamic(() => import("./Revenue"), { ssr: false });
+const UserStatistics = dynamic(() => import("./UserStatistics"), {
+  ssr: false,
+});
+const LocationStatistics = dynamic(() => import("./LocationStatistics"), {
+  ssr: false,
+});
 
 const Layout: React.FC = () => {
   const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<User | null>(null);
-    const router = useRouter();
-    const dispatch = useDispatch();
+  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-  
   const auth_user = useSelector((state: RootState) => state.auth.user);
 
-    useEffect(() => {
-      const token = auth_user?.token;
-      if (!token) {
-        router.push('/Login');
-        return;
-      }
+  useEffect(() => {
+    const token = auth_user?.token;
+    if (!token) {
+      router.push("/Login");
+      return;
+    }
 
-      getCurrentUser(token)
+    getCurrentUser(token)
       .then((data) => {
         if (!data.is_staff) {
-          alert('Only staff members are allowed on this page');
+          alert("Only staff members are allowed on this page");
           dispatch(logoutUser());
-          router.push('/Login');
+          router.push("/Login");
         } else {
           console.log("user data", data);
           setUser(data);
@@ -59,34 +59,33 @@ const Layout: React.FC = () => {
       })
       .catch(() => {
         dispatch(logoutUser());
-        router.push('/Login');
+        router.push("/Login");
       });
   }, [auth_user, router, dispatch]);
 
-    const [activeComponent, setActiveComponent] = useState('orders');
-
+  const [activeComponent, setActiveComponent] = useState("orders");
 
   let componentToRender;
   switch (activeComponent) {
-    case 'users':
+    case "users":
       componentToRender = <UserList />;
       break;
-    case 'site-info':
+    case "site-info":
       componentToRender = <SiteInfo />;
       break;
-    case 'orders':
+    case "orders":
       componentToRender = <OrderList />;
       break;
-    case 'drugs':
+    case "drugs":
       componentToRender = <DrugList />;
       break;
-    case 'revenue':
+    case "revenue":
       componentToRender = <Revenue />;
       break;
-    case 'user_statistics':
+    case "user_statistics":
       componentToRender = <UserStatistics />;
       break;
-    case 'location_statistics':
+    case "location_statistics":
       componentToRender = <LocationStatistics />;
       break;
     default:
@@ -96,9 +95,16 @@ const Layout: React.FC = () => {
 
   return (
     <div className="flex">
-      <Sidebar setActiveComponent={setActiveComponent} activeComponent={activeComponent} />
-      <main className="flex-1 p-4 bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900
-min-h-screen">{componentToRender}</main>
+      <Sidebar
+        setActiveComponent={setActiveComponent}
+        activeComponent={activeComponent}
+      />
+      <main
+        className="flex-1 p-4 bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900
+min-h-screen"
+      >
+        {componentToRender}
+      </main>
     </div>
   );
 };

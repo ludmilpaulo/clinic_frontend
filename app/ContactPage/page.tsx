@@ -1,23 +1,30 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
-  FaEnvelope, FaPhone, FaMapMarkerAlt, FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaWhatsapp,
-} from 'react-icons/fa';
-import { fetchAboutUsData } from '@/services/adminService';
-import { AboutUsData, ApiResponse } from '@/utils/types';
-import { motion } from 'framer-motion';
-import { baseAPI } from '@/utils/variables';
-import { Transition } from '@headlessui/react';
-import Link from 'next/link';
+  FaEnvelope,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaFacebook,
+  FaTwitter,
+  FaLinkedin,
+  FaInstagram,
+  FaWhatsapp,
+} from "react-icons/fa";
+import { fetchAboutUsData } from "@/services/adminService";
+import { AboutUsData, ApiResponse } from "@/utils/types";
+import { motion } from "framer-motion";
+import { baseAPI } from "@/utils/variables";
+import { Transition } from "@headlessui/react";
+import Link from "next/link";
 
 const ContactPage: React.FC = () => {
   const [headerData, setHeaderData] = useState<AboutUsData | null>(null);
   const [formData, setFormData] = useState({
-    subject: '',
-    email: '',
-    phone: '',
-    message: '',
+    subject: "",
+    email: "",
+    phone: "",
+    message: "",
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -33,7 +40,9 @@ const ContactPage: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -50,14 +59,14 @@ const ContactPage: React.FC = () => {
       await axios.post(`${baseAPI}/info/contacts/`, formData);
       setSuccess(true);
       setFormData({
-        subject: '',
-        email: '',
-        phone: '',
-        message: '',
+        subject: "",
+        email: "",
+        phone: "",
+        message: "",
       });
       setLoading(false);
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      setError("Something went wrong. Please try again.");
       setLoading(false);
     }
   };
@@ -78,9 +87,17 @@ const ContactPage: React.FC = () => {
         </div>
       </Transition>
       <div className="bg-white shadow-lg rounded-lg p-6">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Contact Us</h1>
-        <p className="text-gray-600 text-center mb-12">Have any questions or feedback? We&apos;d love to hear from you!</p>
-        {success && <p className="text-green-500 mb-4 text-center">Thank you for contacting us. We will get back to you soon.</p>}
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
+          Contact Us
+        </h1>
+        <p className="text-gray-600 text-center mb-12">
+          Have any questions or feedback? We&apos;d love to hear from you!
+        </p>
+        {success && (
+          <p className="text-green-500 mb-4 text-center">
+            Thank you for contacting us. We will get back to you soon.
+          </p>
+        )}
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="mb-4">
@@ -132,7 +149,7 @@ const ContactPage: React.FC = () => {
             className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
             disabled={loading}
           >
-            {loading ? 'Sending...' : 'Send Message'}
+            {loading ? "Sending..." : "Send Message"}
           </button>
         </form>
       </div>
@@ -143,11 +160,19 @@ const ContactPage: React.FC = () => {
         </div>
         <div className="flex flex-col items-center mb-6 md:mb-0">
           <FaPhone className="text-blue-500 text-4xl mb-2" />
-          <p className="text-gray-700"><Link href={`tel:${headerData?.phone}`}><span>{headerData?.phone}</span></Link></p>
+          <p className="text-gray-700">
+            <Link href={`tel:${headerData?.phone}`}>
+              <span>{headerData?.phone}</span>
+            </Link>
+          </p>
         </div>
         <div className="flex flex-col items-center">
           <FaEnvelope className="text-blue-500 text-4xl mb-2" />
-          <p className="text-gray-700"><Link href={`mailto:${headerData?.email}`}><span>{headerData?.email}</span></Link></p>
+          <p className="text-gray-700">
+            <Link href={`mailto:${headerData?.email}`}>
+              <span>{headerData?.email}</span>
+            </Link>
+          </p>
         </div>
       </div>
       <div className="flex justify-center mt-8 space-x-6">
@@ -159,35 +184,55 @@ const ContactPage: React.FC = () => {
         >
           <>
             {headerData?.facebook && (
-              <Link href={headerData.facebook} target="_blank" rel="noopener noreferrer">
+              <Link
+                href={headerData.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span className="text-4xl text-blue-600 hover:text-blue-800 transition-colors duration-300">
                   <FaFacebook />
                 </span>
               </Link>
             )}
             {headerData?.linkedin && (
-              <Link href={headerData.linkedin} target="_blank" rel="noopener noreferrer">
+              <Link
+                href={headerData.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span className="text-4xl text-blue-600 hover:text-blue-800 transition-colors duration-300">
                   <FaLinkedin />
                 </span>
               </Link>
             )}
             {headerData?.twitter && (
-              <Link href={headerData.twitter} target="_blank" rel="noopener noreferrer">
+              <Link
+                href={headerData.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span className="text-4xl text-blue-600 hover:text-blue-800 transition-colors duration-300">
                   <FaTwitter />
                 </span>
               </Link>
             )}
             {headerData?.instagram && (
-              <Link href={headerData.instagram} target="_blank" rel="noopener noreferrer">
+              <Link
+                href={headerData.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span className="text-4xl text-blue-600 hover:text-blue-800 transition-colors duration-300">
                   <FaInstagram />
                 </span>
               </Link>
             )}
             {headerData?.phone && (
-              <Link href={`https://wa.me/${headerData.phone}`} target="_blank" rel="noopener noreferrer">
+              <Link
+                href={`https://wa.me/${headerData.phone}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span className="text-4xl text-green-600 hover:text-green-800 transition-colors duration-300">
                   <FaWhatsapp />
                 </span>

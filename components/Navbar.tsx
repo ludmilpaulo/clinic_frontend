@@ -1,26 +1,38 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { FaSearch, FaHome, FaInfo, FaEnvelope, FaUser, FaBars, FaShoppingCart, FaSignInAlt } from 'react-icons/fa';
-import Link from 'next/link';
-import { useSelector } from 'react-redux';
-import { selectCartItems } from '@/redux/slices/basketSlice'; // Update the import path as needed
-import SearchResults from './SearchResults';
-import { fetchAboutUsData } from '@/services/adminService';
-import { AboutUsData } from '@/utils/types';
-import { selectUser } from '@/redux/slices/authSlice';
-import { RootState } from '@/redux/store';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import {
+  FaSearch,
+  FaHome,
+  FaInfo,
+  FaEnvelope,
+  FaUser,
+  FaBars,
+  FaShoppingCart,
+  FaSignInAlt,
+} from "react-icons/fa";
+import Link from "next/link";
+import { useSelector } from "react-redux";
+import { selectCartItems } from "@/redux/slices/basketSlice"; // Update the import path as needed
+import SearchResults from "./SearchResults";
+import { fetchAboutUsData } from "@/services/adminService";
+import { AboutUsData } from "@/utils/types";
+import { selectUser } from "@/redux/slices/authSlice";
+import { RootState } from "@/redux/store";
 
 const Navbar: React.FC = () => {
   const user = useSelector((state: RootState) => selectUser(state));
   const token = user?.token;
-  
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const cartItems = useSelector(selectCartItems);
-  const cartItemCount = cartItems.reduce((count, item) => count + (item.quantity ?? 0), 0);
+  const cartItemCount = cartItems.reduce(
+    (count, item) => count + (item.quantity ?? 0),
+    0,
+  );
 
   const [headerData, setHeaderData] = useState<AboutUsData | null>(null);
 
@@ -53,7 +65,7 @@ const Navbar: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="flex text-white text-bold justify-between items-center py-4">
             <div className="text-2xl font-bold">
-              <Link href="/">
+              <Link href="/HomePage">
                 <span className="cursor-pointer flex items-center">
                   {headerData?.logo && (
                     <div className="relative w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 mr-2">
@@ -70,7 +82,7 @@ const Navbar: React.FC = () => {
               </Link>
             </div>
             <div className="hidden md:flex space-x-4">
-              <Link href="/">
+              <Link href="/HomePage">
                 <span className="hover:text-gray-600 flex items-center cursor-pointer">
                   <FaHome className="mr-1" /> Home
                 </span>
@@ -86,15 +98,15 @@ const Navbar: React.FC = () => {
                 </span>
               </Link>
               <Link href="/CartPage">
-                <span className="hover:text-gray-600 flex items-center relative cursor-pointer">
-                  <FaShoppingCart className="mr-1" />
-                  {cartItemCount > 0 && (
+                {cartItemCount > 0 && (
+                  <span className="hover:text-gray-600 flex items-center relative cursor-pointer">
+                    <FaShoppingCart className="mr-1" />
                     <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs px-1">
                       {cartItemCount}
                     </span>
-                  )}
-                  Cart
-                </span>
+                    Cart
+                  </span>
+                )}
               </Link>
               {user?.is_staff && (
                 <Link href="/Admin">
@@ -131,16 +143,20 @@ const Navbar: React.FC = () => {
             </div>
             <div className="md:hidden flex items-center">
               <Link href="/CartPage">
-                <span className="hover:text-gray-600 flex items-center relative cursor-pointer mr-4">
-                  <FaShoppingCart />
-                  {cartItemCount > 0 && (
+                {cartItemCount > 0 && (
+                  <span className="hover:text-gray-600 flex items-center relative cursor-pointer mr-4">
+                    <FaShoppingCart />
+
                     <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs px-1">
                       {cartItemCount}
                     </span>
-                  )}
-                </span>
+                  </span>
+                )}
               </Link>
-              <button onClick={toggleMenu} className="text-gray-800 focus:outline-none">
+              <button
+                onClick={toggleMenu}
+                className="text-gray-800 focus:outline-none"
+              >
                 <FaBars />
               </button>
             </div>
@@ -149,7 +165,7 @@ const Navbar: React.FC = () => {
         {isMenuOpen && (
           <div className="md:hidden bg-white shadow-lg">
             <div className="px-4 pt-2 pb-4">
-              <Link href="/">
+              <Link href="/HomePage">
                 <span className="block text-gray-800 hover:text-gray-600 py-2 flex items-center cursor-pointer">
                   <FaHome className="mr-1" /> Home
                 </span>
@@ -201,7 +217,10 @@ const Navbar: React.FC = () => {
         )}
       </nav>
       {isSearchOpen && (
-        <SearchResults query={searchQuery} onClose={() => setIsSearchOpen(false)} />
+        <SearchResults
+          query={searchQuery}
+          onClose={() => setIsSearchOpen(false)}
+        />
       )}
     </>
   );

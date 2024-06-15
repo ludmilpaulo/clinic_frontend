@@ -1,12 +1,18 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { FaTrashAlt } from 'react-icons/fa';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { Transition } from '@headlessui/react';
-import { selectCartItems, updateBasket, decreaseBasket, removeFromBasket, clearCart } from '@/redux/slices/basketSlice';
-import { Drug } from '@/utils/types';
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { FaTrashAlt } from "react-icons/fa";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Transition } from "@headlessui/react";
+import {
+  selectCartItems,
+  updateBasket,
+  decreaseBasket,
+  removeFromBasket,
+  clearCart,
+} from "@/redux/slices/basketSlice";
+import { Drug } from "@/utils/types";
 
 const CartPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -40,10 +46,13 @@ const CartPage: React.FC = () => {
   };
 
   const handleCheckout = () => {
-    router.push('/CheckoutPage'); // Redirect to the checkout page
+    router.push("/CheckoutPage"); // Redirect to the checkout page
   };
 
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * (item.quantity || 1), 0);
+  const totalPrice = cartItems.reduce(
+    (acc, item) => acc + item.price * (item.quantity || 1),
+    0,
+  );
 
   return (
     <div className="container mx-auto p-6">
@@ -73,8 +82,8 @@ const CartPage: React.FC = () => {
             <>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold">Cart Items</h2>
-                <button 
-                  onClick={handleClearCart} 
+                <button
+                  onClick={handleClearCart}
                   className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-300"
                 >
                   Clear Cart
@@ -82,12 +91,15 @@ const CartPage: React.FC = () => {
               </div>
               <div className="bg-white shadow-lg rounded-lg p-6">
                 {cartItems.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center border-b pb-4 mb-4">
+                  <div
+                    key={item.id}
+                    className="flex justify-between items-center border-b pb-4 mb-4"
+                  >
                     <div className="flex items-center space-x-4">
                       <div className="relative w-20 h-20">
-                        <Image 
-                          src={item.image_urls[0]} 
-                          alt={item.name} 
+                        <Image
+                          src={item.image_urls[0]}
+                          alt={item.name}
                           layout="fill"
                           objectFit="cover"
                           className="rounded"
@@ -97,15 +109,17 @@ const CartPage: React.FC = () => {
                         <h3 className="text-lg font-semibold">{item.name}</h3>
                         <p className="text-gray-600">R{item.price}</p>
                         <div className="flex items-center space-x-2 mt-2">
-                          <button 
-                            onClick={() => handleDecrease(item.id)} 
+                          <button
+                            onClick={() => handleDecrease(item.id)}
                             className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 transition-colors duration-300"
                           >
                             -
                           </button>
-                          <span className="font-semibold text-lg">{item.quantity}</span>
-                          <button 
-                            onClick={() => handleIncrease(item)} 
+                          <span className="font-semibold text-lg">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => handleIncrease(item)}
                             className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 transition-colors duration-300"
                           >
                             +
@@ -114,9 +128,11 @@ const CartPage: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                      <p className="text-lg font-semibold">R{(item.price * (item.quantity || 1)).toFixed(2)}</p>
-                      <button 
-                        onClick={() => handleRemove(item.id)} 
+                      <p className="text-lg font-semibold">
+                        R{(item.price * (item.quantity || 1)).toFixed(2)}
+                      </p>
+                      <button
+                        onClick={() => handleRemove(item.id)}
                         className="text-red-500 hover:text-red-700 transition-colors duration-300"
                       >
                         <FaTrashAlt />
@@ -129,8 +145,8 @@ const CartPage: React.FC = () => {
                   <p className="text-2xl font-bold">R{totalPrice.toFixed(2)}</p>
                 </div>
                 <div className="flex justify-end mt-6">
-                  <button 
-                    onClick={handleCheckout} 
+                  <button
+                    onClick={handleCheckout}
                     className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors duration-300"
                   >
                     Checkout

@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Line } from "react-chartjs-2";
+import "chart.js/auto";
 
 const RevenueSection: React.FC = () => {
   const [revenueData, setRevenueData] = useState<any>(null);
@@ -16,7 +16,7 @@ const RevenueSection: React.FC = () => {
   const fetchRevenueData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/customers/revenue/');
+      const response = await axios.get("/api/customers/revenue/");
       setRevenueData(response.data);
       setLoading(false);
     } catch (error: any) {
@@ -38,13 +38,13 @@ const RevenueSection: React.FC = () => {
               <h3 className="text-lg font-semibold mb-4">Weekly Sales</h3>
               <Line
                 data={{
-                  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                  labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
                   datasets: [
                     {
-                      label: 'Sales',
+                      label: "Sales",
                       data: revenueData.weekly_sales,
-                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                      borderColor: 'rgba(75, 192, 192, 1)',
+                      backgroundColor: "rgba(75, 192, 192, 0.2)",
+                      borderColor: "rgba(75, 192, 192, 1)",
                       borderWidth: 1,
                     },
                   ],
@@ -57,13 +57,13 @@ const RevenueSection: React.FC = () => {
               <h3 className="text-lg font-semibold mb-4">Monthly Sales</h3>
               <Line
                 data={{
-                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
                   datasets: [
                     {
-                      label: 'Sales',
+                      label: "Sales",
                       data: revenueData.monthly_sales,
-                      backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                      borderColor: 'rgba(153, 102, 255, 1)',
+                      backgroundColor: "rgba(153, 102, 255, 0.2)",
+                      borderColor: "rgba(153, 102, 255, 1)",
                       borderWidth: 1,
                     },
                   ],

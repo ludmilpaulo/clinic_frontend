@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import DrugForm from './DrugForm';
-import { deleteDrug, fetchDrugs } from '@/services/adminService';
-import Image from 'next/image';
+import React, { useEffect, useState } from "react";
+import DrugForm from "./DrugForm";
+import { deleteDrug, fetchDrugs } from "@/services/adminService";
+import Image from "next/image";
 
 // Define the Drug type
 interface Drug {
@@ -120,7 +120,11 @@ const DrugList: React.FC = () => {
             >
               Close
             </button>
-            <DrugForm drug={currentDrug} onClose={closeModal} loadDrugs={loadData} />
+            <DrugForm
+              drug={currentDrug}
+              onClose={closeModal}
+              loadDrugs={loadData}
+            />
           </div>
         </div>
       )}

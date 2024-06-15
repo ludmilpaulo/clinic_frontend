@@ -1,10 +1,10 @@
-import { useEffect, useState, ComponentType } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, ComponentType } from "react";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { getCurrentUser } from '@/services/authService';
-import { Transition } from '@headlessui/react';
-import { logoutUser } from '@/redux/slices/authSlice';
+import { getCurrentUser } from "@/services/authService";
+import { Transition } from "@headlessui/react";
+import { logoutUser } from "@/redux/slices/authSlice";
 
 interface User {
   id: number;
@@ -19,7 +19,9 @@ export interface WithAuthProps {
   user: User;
 }
 
-const withAuth = <P extends WithAuthProps>(WrappedComponent: ComponentType<P>) => {
+const withAuth = <P extends WithAuthProps>(
+  WrappedComponent: ComponentType<P>,
+) => {
   const WithAuthComponent = (props: Omit<P, keyof WithAuthProps>) => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
@@ -31,7 +33,7 @@ const withAuth = <P extends WithAuthProps>(WrappedComponent: ComponentType<P>) =
     useEffect(() => {
       const token = auth_user?.token;
       if (!token) {
-        router.push('/Login');
+        router.push("/Login");
         return;
       }
 
@@ -42,7 +44,7 @@ const withAuth = <P extends WithAuthProps>(WrappedComponent: ComponentType<P>) =
         })
         .catch(() => {
           dispatch(logoutUser()); // Ensure the action creator is called
-          router.push('/Login');
+          router.push("/Login");
         });
     }, [auth_user, router, dispatch]);
 

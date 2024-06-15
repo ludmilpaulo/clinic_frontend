@@ -1,38 +1,44 @@
 "use client";
 
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import Sidebar from './Sidebar';
-import Appointments from './appointments';
-import Availability from './availability';
-import Consultations from './consultations';
-import Prescriptions from './Prescriptions';
-import Profile from './profile';
-import { selectUser } from '@/redux/slices/authSlice';
-import { RootState } from '@/redux/store';
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import Sidebar from "./Sidebar";
+import Appointments from "./appointments";
+import Availability from "./availability";
+import Consultations from "./consultations";
+import Prescriptions from "./Prescriptions";
+import Profile from "./profile";
+import { selectUser } from "@/redux/slices/authSlice";
+import { RootState } from "@/redux/store";
 
 const DoctorDashBoard = () => {
-  const [section, setSection] = useState<'profile' | 'availability' | 'appointments' | 'consultations' | 'prescriptions'>('profile');
+  const [section, setSection] = useState<
+    | "profile"
+    | "availability"
+    | "appointments"
+    | "consultations"
+    | "prescriptions"
+  >("profile");
   const user = useSelector((state: RootState) => selectUser(state));
 
   console.log("user ", user);
 
   const userId: number = user?.user_id ?? 0;
   console.log("userId ", userId);
-  const username: string = user?.username ?? '';
+  const username: string = user?.username ?? "";
   console.log("username ", username);
 
   const renderSection = () => {
     switch (section) {
-      case 'profile':
+      case "profile":
         return <Profile userId={userId} username={username} />;
-      case 'availability':
+      case "availability":
         return <Availability userId={userId} />;
-      case 'appointments':
+      case "appointments":
         return <Appointments userId={userId} />;
-      case 'consultations':
+      case "consultations":
         return <Consultations userId={userId} />;
-      case 'prescriptions':
+      case "prescriptions":
         return <Prescriptions userId={userId} />;
       default:
         return <Profile userId={userId} username={username} />;

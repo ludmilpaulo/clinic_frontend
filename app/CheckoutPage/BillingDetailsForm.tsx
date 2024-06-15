@@ -1,12 +1,12 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSelector, useDispatch } from 'react-redux';
-import CryptoJS from 'crypto-js';
-import axios from 'axios';
-import { selectUser } from '@/redux/slices/authSlice';
-import { clearCart, selectCartItems } from '@/redux/slices/basketSlice';
-import { baseAPI } from '@/utils/variables';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import CryptoJS from "crypto-js";
+import axios from "axios";
+import { selectUser } from "@/redux/slices/authSlice";
+import { clearCart, selectCartItems } from "@/redux/slices/basketSlice";
+import { baseAPI } from "@/utils/variables";
 
 interface FormState {
   name: string;
@@ -22,7 +22,10 @@ interface BillingDetailsFormProps {
   setLoading: (loading: boolean) => void;
 }
 
-const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ totalPrice, setLoading }) => {
+const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({
+  totalPrice,
+  setLoading,
+}) => {
   const user = useSelector(selectUser);
   const token = user?.token;
   const router = useRouter();
@@ -30,16 +33,16 @@ const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ totalPrice, set
   const cartItems = useSelector(selectCartItems);
 
   const [form, setForm] = useState<FormState>({
-    name: '',
-    email: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: '',
+    name: "",
+    email: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "",
   });
 
   useEffect(() => {
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.src = "https://sandbox.payfast.co.za/onsite/engine.js";
     script.async = true;
     document.body.appendChild(script);
@@ -69,9 +72,9 @@ const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ totalPrice, set
       city: form.city,
       postal_code: form.postalCode,
       country: form.country,
-      payment_method: 'payfast',
+      payment_method: "payfast",
       status,
-      items: cartItems.map(item => ({
+      items: cartItems.map((item) => ({
         id: item.id,
         quantity: item.quantity,
       })),
@@ -79,56 +82,73 @@ const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ totalPrice, set
 
     try {
       const response = await fetch(`${baseAPI}/order/checkout/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(orderData),
       });
 
       if (response.ok) {
         dispatch(clearCart());
-        if (status === 'completed') {
-          router.push('/thank-you');
+        if (status === "completed") {
+          router.push("/thank-you");
         }
       } else {
         const errorData = await response.json();
-        console.error('Error:', errorData);
+        console.error("Error:", errorData);
         alert(`Error: ${errorData.detail}`);
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred. Please try again.');
+      console.error("Error:", error);
+      alert("An error occurred. Please try again.");
     }
 
     setLoading(false);
   };
 
-  const generateSignature = (data: Record<string, string>, passphrase: string): string => {
+  const generateSignature = (
+    data: Record<string, string>,
+    passphrase: string,
+  ): string => {
     const queryString = Object.keys(data)
-      .map(key => `${key}=${encodeURIComponent(data[key]).replace(/%20/g, "+")}`)
-      .join('&');
+      .map(
+        (key) => `${key}=${encodeURIComponent(data[key]).replace(/%20/g, "+")}`,
+      )
+      .join("&");
     const signatureString = `${queryString}&passphrase=${encodeURIComponent(passphrase).replace(/%20/g, "+")}`;
     return CryptoJS.MD5(signatureString).toString();
   };
 
   const dataToString = (dataArray: Record<string, string>): string => {
     return Object.keys(dataArray)
-      .map(key => `${key}=${encodeURIComponent(dataArray[key].trim()).replace(/%20/g, "+")}`)
-      .join('&');
+      .map(
+        (key) =>
+          `${key}=${encodeURIComponent(dataArray[key].trim()).replace(/%20/g, "+")}`,
+      )
+      .join("&");
   };
 
   const generatePaymentIdentifier = async (pfParamString: string) => {
     try {
-      const response = await axios.post('https://sandbox.payfast.co.za/onsite/process', pfParamString, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+      const response = await axios.post(
+        "https://sandbox.payfast.co.za/onsite/process",
+        pfParamString,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         },
-      });
+      );
       return response.data.uuid;
     } catch (error: any) {
-      console.error('PayFast payment identifier generation error:', error.response ? error.response.data : error.message);
-      alert(`An error occurred during payment identifier generation: ${error.response ? error.response.data : error.message}`);
+      console.error(
+        "PayFast payment identifier generation error:",
+        error.response ? error.response.data : error.message,
+      );
+      alert(
+        `An error occurred during payment identifier generation: ${error.response ? error.response.data : error.message}`,
+      );
       return null;
     }
   };
@@ -142,8 +162,8 @@ const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ totalPrice, set
       return_url: process.env.NEXT_PUBLIC_RETURN_URL!,
       cancel_url: process.env.NEXT_PUBLIC_RETURN_URL!,
       notify_url: `${process.env.NEXT_PUBLIC_BASE_API}/order/notify/`,
-      name_first: form.name.split(' ')[0],
-      name_last: form.name.split(' ')[1] || '',
+      name_first: form.name.split(" ")[0],
+      name_last: form.name.split(" ")[1] || "",
       email_address: form.email,
       m_payment_id: `${new Date().getTime()}`,
       amount: totalPrice.toFixed(2),
@@ -158,15 +178,15 @@ const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ totalPrice, set
 
     if (paymentUUID) {
       // Handle the submission before triggering the payment
-      await handleSubmitOrder('pending');
+      await handleSubmitOrder("pending");
 
       // Add event listeners for payment completion and cancellation
-      window.addEventListener('message', (event) => {
+      window.addEventListener("message", (event) => {
         if (event.data && event.data.status) {
-          if (event.data.status === 'completed') {
-            handleSubmitOrder('completed');
-          } else if (event.data.status === 'cancelled') {
-            handleSubmitOrder('canceled');
+          if (event.data.status === "completed") {
+            handleSubmitOrder("completed");
+          } else if (event.data.status === "cancelled") {
+            handleSubmitOrder("canceled");
           }
         }
       });
@@ -181,7 +201,10 @@ const BillingDetailsForm: React.FC<BillingDetailsFormProps> = ({ totalPrice, set
   };
 
   return (
-    <form onSubmit={handleMakePayment} className="bg-white p-6 rounded-lg shadow-md">
+    <form
+      onSubmit={handleMakePayment}
+      className="bg-white p-6 rounded-lg shadow-md"
+    >
       <h2 className="text-2xl font-semibold mb-4">Billing Details</h2>
       <input
         type="text"

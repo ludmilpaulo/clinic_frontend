@@ -1,12 +1,17 @@
-import { useEffect, useState } from 'react';
-import ModalForm from './ModalForm';
-import { fetchAboutUs, createAboutUs, updateAboutUs, deleteAboutUs } from '@/services/adminService';
-import { AboutUsData, ApiResponse } from '@/utils/types';
+import { useEffect, useState } from "react";
+import ModalForm from "./ModalForm";
+import {
+  fetchAboutUs,
+  createAboutUs,
+  updateAboutUs,
+  deleteAboutUs,
+} from "@/services/adminService";
+import { AboutUsData, ApiResponse } from "@/utils/types";
 
 const AboutUsPage = () => {
   const [items, setItems] = useState<AboutUsData[]>([]);
-  const [formData, setFormData] = useState<Partial<AboutUsData>>({ about: '' });
-  const [message, setMessage] = useState('');
+  const [formData, setFormData] = useState<Partial<AboutUsData>>({ about: "" });
+  const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState<number | null>(null);
@@ -16,21 +21,23 @@ const AboutUsPage = () => {
       try {
         const data: ApiResponse[] = await fetchAboutUs();
         if (Array.isArray(data)) {
-          const aboutData = data.map(item => item.about); // Extract the `about` field
+          const aboutData = data.map((item) => item.about); // Extract the `about` field
           setItems(aboutData);
         } else {
-          console.error('Unexpected data format:', data);
+          console.error("Unexpected data format:", data);
           setItems([]);
         }
       } catch (error) {
-        console.error('Failed to fetch about us data:', error);
+        console.error("Failed to fetch about us data:", error);
         setItems([]);
       }
     };
     fetchData();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -50,20 +57,20 @@ const AboutUsPage = () => {
     try {
       if (isEditing && currentId !== null) {
         await updateAboutUs(currentId, formData);
-        setMessage('Resource updated successfully!');
+        setMessage("Resource updated successfully!");
       } else {
         await createAboutUs(formData);
-        setMessage('Resource created successfully!');
+        setMessage("Resource created successfully!");
       }
       setIsModalOpen(false);
       const data: ApiResponse[] = await fetchAboutUs();
       if (Array.isArray(data)) {
-        const aboutData = data.map(item => item.about); // Extract the `about` field
+        const aboutData = data.map((item) => item.about); // Extract the `about` field
         setItems(aboutData);
       }
     } catch (error) {
-      console.error('Operation failed:', error);
-      setMessage('Failed to perform operation.');
+      console.error("Operation failed:", error);
+      setMessage("Failed to perform operation.");
     }
   };
 
@@ -77,20 +84,20 @@ const AboutUsPage = () => {
   const handleDelete = async (id: number) => {
     try {
       await deleteAboutUs(id);
-      setMessage('Resource deleted successfully!');
+      setMessage("Resource deleted successfully!");
       const data: ApiResponse[] = await fetchAboutUs();
       if (Array.isArray(data)) {
-        const aboutData = data.map(item => item.about); // Extract the `about` field
+        const aboutData = data.map((item) => item.about); // Extract the `about` field
         setItems(aboutData);
       }
     } catch (error) {
-      console.error('Deletion failed:', error);
-      setMessage('Failed to delete resource.');
+      console.error("Deletion failed:", error);
+      setMessage("Failed to delete resource.");
     }
   };
 
   const openModal = () => {
-    setFormData({ about: '' });
+    setFormData({ about: "" });
     setIsEditing(false);
     setIsModalOpen(true);
   };
@@ -136,7 +143,7 @@ const AboutUsPage = () => {
         formData={formData}
         handleChange={handleChange}
         handleEditorChange={handleEditorChange}
-        title={isEditing ? 'Edit About Us' : 'Add About Us'}
+        title={isEditing ? "Edit About Us" : "Add About Us"}
         isAboutUs
       />
       {message && <p className="mt-4">{message}</p>}

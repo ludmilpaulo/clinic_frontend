@@ -1,13 +1,13 @@
 "use client";
-import React, { useState } from 'react';
-import { FaBox, FaUsers, FaChartLine, FaClipboardList } from 'react-icons/fa';
-import ProductsSection from './sections/ProductsSection';
-import OrdersSection from './sections/OrdersSection';
-import CustomersSection from './sections/CustomersSection';
-import RevenueSection from './sections/RevenueSection';
+import React, { useState } from "react";
+import { FaBox, FaUsers, FaChartLine, FaClipboardList } from "react-icons/fa";
+import ProductsSection from "./sections/ProductsSection";
+import OrdersSection from "./sections/OrdersSection";
+import CustomersSection from "./sections/CustomersSection";
+import RevenueSection from "./sections/RevenueSection";
 
 const ProfilePage: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<string>('products');
+  const [activeSection, setActiveSection] = useState<string>("products");
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -18,9 +18,9 @@ const ProfilePage: React.FC = () => {
             <ul>
               <li>
                 <button
-                  onClick={() => setActiveSection('products')}
+                  onClick={() => setActiveSection("products")}
                   className={`flex items-center p-2 w-full hover:bg-gray-200 ${
-                    activeSection === 'products' ? 'bg-gray-200' : ''
+                    activeSection === "products" ? "bg-gray-200" : ""
                   }`}
                 >
                   <FaBox className="mr-2" /> Products
@@ -28,9 +28,9 @@ const ProfilePage: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setActiveSection('orders')}
+                  onClick={() => setActiveSection("orders")}
                   className={`flex items-center p-2 w-full hover:bg-gray-200 ${
-                    activeSection === 'orders' ? 'bg-gray-200' : ''
+                    activeSection === "orders" ? "bg-gray-200" : ""
                   }`}
                 >
                   <FaClipboardList className="mr-2" /> Orders
@@ -38,9 +38,9 @@ const ProfilePage: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setActiveSection('customers')}
+                  onClick={() => setActiveSection("customers")}
                   className={`flex items-center p-2 w-full hover:bg-gray-200 ${
-                    activeSection === 'customers' ? 'bg-gray-200' : ''
+                    activeSection === "customers" ? "bg-gray-200" : ""
                   }`}
                 >
                   <FaUsers className="mr-2" /> Customers
@@ -48,9 +48,9 @@ const ProfilePage: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setActiveSection('revenue')}
+                  onClick={() => setActiveSection("revenue")}
                   className={`flex items-center p-2 w-full hover:bg-gray-200 ${
-                    activeSection === 'revenue' ? 'bg-gray-200' : ''
+                    activeSection === "revenue" ? "bg-gray-200" : ""
                   }`}
                 >
                   <FaChartLine className="mr-2" /> Revenue
@@ -61,10 +61,10 @@ const ProfilePage: React.FC = () => {
         </div>
       </aside>
       <main className="flex-1 p-6">
-        {activeSection === 'products' && <ProductsSection />}
-        {activeSection === 'orders' && <OrdersSection />}
-        {activeSection === 'customers' && <CustomersSection />}
-        {activeSection === 'revenue' && <RevenueSection />}
+        {activeSection === "products" && <ProductsSection />}
+        {activeSection === "orders" && <OrdersSection />}
+        {activeSection === "customers" && <CustomersSection />}
+        {activeSection === "revenue" && <RevenueSection />}
       </main>
     </div>
   );

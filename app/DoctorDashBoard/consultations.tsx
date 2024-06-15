@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { selectUser } from '@/redux/slices/authSlice';
-import axios from 'axios';
-import { baseAPI } from '@/utils/variables';
-import dayjs from 'dayjs';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useState, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { selectUser } from "@/redux/slices/authSlice";
+import axios from "axios";
+import { baseAPI } from "@/utils/variables";
+import dayjs from "dayjs";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface ConsultationProps {
   userId: number | null;
@@ -15,47 +15,54 @@ interface ConsultationProps {
 const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
   const [consultations, setConsultations] = useState<any[]>([]);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
-  const [selectedConsultation, setSelectedConsultation] = useState<any | null>(null);
+  const [selectedConsultation, setSelectedConsultation] = useState<any | null>(
+    null,
+  );
   const [drugs, setDrugs] = useState<any[]>([]);
   const [prescriptionDrugs, setPrescriptionDrugs] = useState<any[]>([]);
-  const [notes, setNotes] = useState<string>('');
+  const [notes, setNotes] = useState<string>("");
   const user = useSelector((state: RootState) => selectUser(state));
   const token = user?.token;
 
-  const fetchConsultations = useCallback((appointmentTime: Date | null) => {
-    let url = `${baseAPI}/pharmacy/appointments/${userId}`;
-    if (appointmentTime) {
-      url += `?appointment_time=${appointmentTime.toISOString()}`;
-    }
+  const fetchConsultations = useCallback(
+    (appointmentTime: Date | null) => {
+      let url = `${baseAPI}/pharmacy/appointments/${userId}`;
+      if (appointmentTime) {
+        url += `?appointment_time=${appointmentTime.toISOString()}`;
+      }
 
-    if (token && userId) {
-      axios.get(url, {
-        headers: {
-          'Authorization': `Token ${token}`
-        }
-      })
-      .then(response => {
-        setConsultations(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching consultations:', error);
-      });
-    }
-  }, [token, userId]);
+      if (token && userId) {
+        axios
+          .get(url, {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          })
+          .then((response) => {
+            setConsultations(response.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching consultations:", error);
+          });
+      }
+    },
+    [token, userId],
+  );
 
   const fetchDrugs = useCallback(() => {
     if (token) {
-      axios.get(`${baseAPI}/pharmacy/drugs/`, {
-        headers: {
-          'Authorization': `Token ${token}`
-        }
-      })
-      .then(response => {
-        setDrugs(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching drugs:', error);
-      });
+      axios
+        .get(`${baseAPI}/pharmacy/drugs/`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        })
+        .then((response) => {
+          setDrugs(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching drugs:", error);
+        });
     }
   }, [token]);
 
@@ -64,28 +71,29 @@ const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
       const data = {
         patient: selectedConsultation.patient.id,
         prescribed_by: user.user_id,
-        drugs: prescriptionDrugs.map(drug => ({
+        drugs: prescriptionDrugs.map((drug) => ({
           drug: drug.id,
           quantity: drug.quantity,
         })),
         notes,
       };
 
-      axios.post(`${baseAPI}/pharmacy/prescriptions/`, data, {
-        headers: {
-          'Authorization': `Token ${token}`
-        }
-      })
-      .then(response => {
-        console.log('Prescription created:', response.data);
-        // Close modal and reset form
-        setSelectedConsultation(null);
-        setPrescriptionDrugs([]);
-        setNotes('');
-      })
-      .catch(error => {
-        console.error('Error creating prescription:', error);
-      });
+      axios
+        .post(`${baseAPI}/pharmacy/prescriptions/`, data, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("Prescription created:", response.data);
+          // Close modal and reset form
+          setSelectedConsultation(null);
+          setPrescriptionDrugs([]);
+          setNotes("");
+        })
+        .catch((error) => {
+          console.error("Error creating prescription:", error);
+        });
     }
   };
 
@@ -120,10 +128,18 @@ const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
               className="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow duration-200"
               onClick={() => setSelectedConsultation(consultation)}
             >
-              <h3 className="text-lg font-semibold mb-2">{dayjs(consultation.appointment_time).format('MMMM D, YYYY')}</h3>
-              <p className="text-sm text-gray-600">Patient: {consultation.patient_name}</p>
-              <p className="text-sm text-gray-600">Time: {dayjs(consultation.appointment_time).format('h:mm A')}</p>
-              <p className="text-sm text-gray-600">Status: {consultation.status}</p>
+              <h3 className="text-lg font-semibold mb-2">
+                {dayjs(consultation.appointment_time).format("MMMM D, YYYY")}
+              </h3>
+              <p className="text-sm text-gray-600">
+                Patient: {consultation.patient_name}
+              </p>
+              <p className="text-sm text-gray-600">
+                Time: {dayjs(consultation.appointment_time).format("h:mm A")}
+              </p>
+              <p className="text-sm text-gray-600">
+                Status: {consultation.status}
+              </p>
             </div>
           ))}
         </div>
@@ -133,10 +149,14 @@ const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
             <div className="bg-white p-6">
-              <h2 className="text-xl font-bold mb-4">Create Prescription for {selectedConsultation.patient_name}</h2>
+              <h2 className="text-xl font-bold mb-4">
+                Create Prescription for {selectedConsultation.patient_name}
+              </h2>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Medication</label>
-                {drugs.map(drug => (
+                <label className="block text-sm font-medium text-gray-700">
+                  Medication
+                </label>
+                {drugs.map((drug) => (
                   <div key={drug.id} className="flex items-center mb-2">
                     <input
                       type="checkbox"
@@ -144,18 +164,30 @@ const Consultations: React.FC<ConsultationProps> = ({ userId }) => {
                       className="mr-2"
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setPrescriptionDrugs([...prescriptionDrugs, { ...drug, quantity: 1 }]);
+                          setPrescriptionDrugs([
+                            ...prescriptionDrugs,
+                            { ...drug, quantity: 1 },
+                          ]);
                         } else {
-                          setPrescriptionDrugs(prescriptionDrugs.filter(d => d.id !== drug.id));
+                          setPrescriptionDrugs(
+                            prescriptionDrugs.filter((d) => d.id !== drug.id),
+                          );
                         }
                       }}
                     />
-                    <label htmlFor={`drug-${drug.id}`} className="text-sm text-gray-600">{drug.name}</label>
+                    <label
+                      htmlFor={`drug-${drug.id}`}
+                      className="text-sm text-gray-600"
+                    >
+                      {drug.name}
+                    </label>
                   </div>
                 ))}
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Notes</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Notes
+                </label>
                 <textarea
                   className="border border-gray-300 rounded p-2 w-full"
                   value={notes}

@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { FaCheck, FaTimes } from "react-icons/fa";
 
 const OrdersSection: React.FC = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -15,10 +15,10 @@ const OrdersSection: React.FC = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/orders/');
+      const response = await axios.get("/api/orders/");
       setOrders(response.data);
       setLoading(false);
-    } catch (error : any) {
+    } catch (error: any) {
       setError(error.message);
       setLoading(false);
     }
@@ -60,14 +60,14 @@ const OrdersSection: React.FC = () => {
                   <td className="border px-4 py-2">{order.total_price}</td>
                   <td className="border px-4 py-2">{order.status}</td>
                   <td className="border px-4 py-2">
-                    <button 
-                      onClick={() => handleStatusChange(order, 'completed')} 
+                    <button
+                      onClick={() => handleStatusChange(order, "completed")}
                       className="text-green-500 hover:text-green-700 mr-2"
                     >
                       <FaCheck />
                     </button>
-                    <button 
-                      onClick={() => handleStatusChange(order, 'pending')} 
+                    <button
+                      onClick={() => handleStatusChange(order, "pending")}
                       className="text-red-500 hover:text-red-700"
                     >
                       <FaTimes />

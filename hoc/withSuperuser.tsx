@@ -1,8 +1,12 @@
-import { ComponentType } from 'react';
-import withAuth, { WithAuthProps } from './withAuth';
+import { ComponentType } from "react";
+import withAuth, { WithAuthProps } from "./withAuth";
 
-const withSuperuser = <P extends WithAuthProps>(WrappedComponent: ComponentType<P>) => {
-  const WithSuperuserComponent = (props: Omit<P, keyof WithAuthProps> & { user: WithAuthProps['user'] }) => {
+const withSuperuser = <P extends WithAuthProps>(
+  WrappedComponent: ComponentType<P>,
+) => {
+  const WithSuperuserComponent = (
+    props: Omit<P, keyof WithAuthProps> & { user: WithAuthProps["user"] },
+  ) => {
     const { user } = props;
 
     if (!user.is_superuser) {

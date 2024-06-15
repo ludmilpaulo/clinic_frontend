@@ -55,7 +55,7 @@ const basketSlice = createSlice({
       // Remove items from cart that were successfully ordered
       const orderedDrugIds = action.payload;
       state.items = state.items.filter(
-        (item) => !orderedDrugIds.includes(item.id)
+        (item) => !orderedDrugIds.includes(item.id),
       );
     },
     clearCart: (state) => {
@@ -64,7 +64,13 @@ const basketSlice = createSlice({
   },
 });
 
-export const { updateBasket, decreaseBasket, removeFromBasket, clearCart, removeOrderedItems } = basketSlice.actions;
+export const {
+  updateBasket,
+  decreaseBasket,
+  removeFromBasket,
+  clearCart,
+  removeOrderedItems,
+} = basketSlice.actions;
 export const selectCartItems = (state: RootState) => state.basket.items;
 
 export default basketSlice.reducer;

@@ -1,12 +1,12 @@
 // components/SearchResults.tsx
 "use client";
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Drug } from '@/utils/types';
-import DrugCard from './DrugCard';
-import { baseAPI } from '@/utils/variables';
-import { FaTimes } from 'react-icons/fa';
-import { Transition } from '@headlessui/react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Drug } from "@/utils/types";
+import DrugCard from "./DrugCard";
+import { baseAPI } from "@/utils/variables";
+import { FaTimes } from "react-icons/fa";
+import { Transition } from "@headlessui/react";
 
 type SearchResultsProps = {
   query: string;
@@ -22,13 +22,14 @@ const SearchResults: React.FC<SearchResultsProps> = ({ query, onClose }) => {
     const delayDebounceFn = setTimeout(() => {
       if (query) {
         setLoading(true);
-        axios.get(`${baseAPI}/pharmacy/search/?query=${query}`)
-          .then(response => {
-            console.log("search =>", response.data)
+        axios
+          .get(`${baseAPI}/pharmacy/search/?query=${query}`)
+          .then((response) => {
+            console.log("search =>", response.data);
             setResults(response.data);
             setLoading(false);
           })
-          .catch(error => {
+          .catch((error) => {
             setError(error.message);
             setLoading(false);
           });
@@ -69,7 +70,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({ query, onClose }) => {
         </Transition>
         {!loading && (
           <>
-            {error && <div className="text-red-500 text-center mb-4">Error: {error}</div>}
+            {error && (
+              <div className="text-red-500 text-center mb-4">
+                Error: {error}
+              </div>
+            )}
             <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {results.map((drug: Drug) => (
                 <DrugCard key={drug.id} drug={drug} />
@@ -82,4 +87,4 @@ const SearchResults: React.FC<SearchResultsProps> = ({ query, onClose }) => {
   );
 };
 
-export default SearchResults
+export default SearchResults;

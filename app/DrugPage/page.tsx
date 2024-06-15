@@ -1,15 +1,20 @@
 "use client";
-import React, { useEffect, Suspense, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Image from 'next/image';
-import axios from 'axios';
-import { FaShoppingCart, FaArrowLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { Transition } from '@headlessui/react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateBasket, selectCartItems } from '@/redux/slices/basketSlice'; // Update the import path as needed
-import { Drug } from '@/utils/types';
-import { baseAPI } from '@/utils/variables';
-import withActiveUser from '@/hoc/withActiveUser';
+import React, { useEffect, Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import axios from "axios";
+import {
+  FaShoppingCart,
+  FaArrowLeft,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
+import { Transition } from "@headlessui/react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateBasket, selectCartItems } from "@/redux/slices/basketSlice"; // Update the import path as needed
+import { Drug } from "@/utils/types";
+import { baseAPI } from "@/utils/variables";
+import withActiveUser from "@/hoc/withActiveUser";
 
 const DrugPage: React.FC = () => {
   const [drug, setDrug] = useState<Drug | null>(null);
@@ -21,16 +26,17 @@ const DrugPage: React.FC = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector(selectCartItems);
 
-  const drugId = searchParams.get('id');
+  const drugId = searchParams.get("id");
 
   useEffect(() => {
     if (drugId) {
-      axios.get(`${baseAPI}/pharmacy/pharmacy/detail/${drugId}/`)
-        .then(response => {
+      axios
+        .get(`${baseAPI}/pharmacy/pharmacy/detail/${drugId}/`)
+        .then((response) => {
           setDrug(response.data);
           setLoading(false);
         })
-        .catch(error => {
+        .catch((error) => {
           setError(error.message);
           setLoading(false);
         });
@@ -42,18 +48,22 @@ const DrugPage: React.FC = () => {
   };
 
   const isInCart = (drug: Drug) => {
-    return cartItems.some(item => item.id === drug.id);
+    return cartItems.some((item) => item.id === drug.id);
   };
 
   const nextSlide = () => {
     if (drug && drug.image_urls) {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % drug.image_urls.length);
+      setCurrentImageIndex(
+        (prevIndex) => (prevIndex + 1) % drug.image_urls.length,
+      );
     }
   };
 
   const prevSlide = () => {
     if (drug && drug.image_urls) {
-      setCurrentImageIndex((prevIndex) => (prevIndex === 0 ? drug.image_urls.length - 1 : prevIndex - 1));
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === 0 ? drug.image_urls.length - 1 : prevIndex - 1,
+      );
     }
   };
 
@@ -75,7 +85,9 @@ const DrugPage: React.FC = () => {
 
       {!loading && (
         <>
-          {error && <div className="text-center text-red-500 mb-4">Error: {error}</div>}
+          {error && (
+            <div className="text-center text-red-500 mb-4">Error: {error}</div>
+          )}
           {drug && (
             <div className="bg-white shadow-lg rounded-lg p-6">
               <button
@@ -116,20 +128,28 @@ const DrugPage: React.FC = () => {
                 </div>
                 <div className="w-full md:w-1/2 md:pl-6">
                   <h1 className="text-2xl font-bold mb-2">{drug.name}</h1>
-                  <p className="text-lg font-semibold text-gray-700 mb-4">{drug.price} Kz</p>
-                  <p className="text-gray-600 mb-2"><strong>Category:</strong> {drug.category_name}</p>
-                  <div className="text-gray-600 mb-4" dangerouslySetInnerHTML={{ __html: drug.description }} />
+                  <p className="text-lg font-semibold text-gray-700 mb-4">
+                    {drug.price} Kz
+                  </p>
+                  <p className="text-gray-600 mb-2">
+                    <strong>Category:</strong> {drug.category_name}
+                  </p>
+                  <div
+                    className="text-gray-600 mb-4"
+                    dangerouslySetInnerHTML={{ __html: drug.description }}
+                  />
                   {drug.quantity_available < 10 && (
                     <p className="text-red-500 text-sm mb-4">
                       Warning: Low stock, only {drug.quantity_available} left!
                     </p>
                   )}
                   <button
-                    className={`flex items-center justify-center bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600 transition-colors duration-300 ${isInCart(drug) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`flex items-center justify-center bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600 transition-colors duration-300 ${isInCart(drug) ? "opacity-50 cursor-not-allowed" : ""}`}
                     onClick={() => handleAddToCart(drug)}
                     disabled={isInCart(drug)}
                   >
-                    <FaShoppingCart className="mr-2" /> {isInCart(drug) ? 'Already in Cart' : 'Add to Cart'}
+                    <FaShoppingCart className="mr-2" />{" "}
+                    {isInCart(drug) ? "Already in Cart" : "Add to Cart"}
                   </button>
                 </div>
               </div>

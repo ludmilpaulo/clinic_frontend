@@ -1,5 +1,5 @@
 "use client";
-import ForgotPasswordForm from '@/components/ForgotPasswordForm';
+import ForgotPasswordForm from "@/components/ForgotPasswordForm";
 
 const ForgotPassword = () => {
   return <ForgotPasswordForm />;

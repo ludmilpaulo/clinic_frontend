@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { requestPasswordReset } from '@/services/authService';
-import { Transition } from '@headlessui/react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { requestPasswordReset } from "@/services/authService";
+import { Transition } from "@headlessui/react";
 
 const ForgotPasswordForm = () => {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -15,17 +15,17 @@ const ForgotPasswordForm = () => {
     setLoading(true);
     try {
       await requestPasswordReset(email);
-      setMessage('Password reset email sent. Please check your inbox.');
-      setError('');
+      setMessage("Password reset email sent. Please check your inbox.");
+      setError("");
       setLoading(false);
-      alert('Password reset email sent successfully.');
-      router.push('/Login');
+      alert("Password reset email sent successfully.");
+      router.push("/Login");
     } catch (err) {
-      setError('Failed to send password reset email. Please try again.');
-      setMessage('');
+      setError("Failed to send password reset email. Please try again.");
+      setMessage("");
       setLoading(false);
-      alert('Please try to sign-up again.');
-      router.push('/Signup');
+      alert("Please try to sign-up again.");
+      router.push("/Signup");
     }
   };
 
@@ -45,12 +45,18 @@ const ForgotPasswordForm = () => {
         </div>
       </Transition>
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gray-700">Forgot Password</h1>
-        {message && <p className="text-green-500 text-center mb-4">{message}</p>}
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-700">
+          Forgot Password
+        </h1>
+        {message && (
+          <p className="text-green-500 text-center mb-4">{message}</p>
+        )}
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2 text-gray-700">Email</label>
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -58,7 +64,10 @@ const ForgotPasswordForm = () => {
               className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full transition duration-200">
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full transition duration-200"
+          >
             Send Password Reset Email
           </button>
         </form>

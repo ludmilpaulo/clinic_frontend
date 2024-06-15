@@ -1,56 +1,61 @@
 "use client";
-import React from 'react';
+import React from "react";
 
 interface SidebarProps {
   setActiveComponent: (component: string) => void;
   activeComponent: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ setActiveComponent, activeComponent }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  setActiveComponent,
+  activeComponent,
+}) => {
   return (
-    <div className="w-64 bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900
-    shadow-md min-h-screen">
+    <div
+      className="w-64 bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900
+    shadow-md min-h-screen"
+    >
       <nav className="p-4">
         <ul>
           <li
-            className={`cursor-pointer p-2 ${activeComponent === 'users' ? 'bg-gray-200' : ''}`}
-            onClick={() => setActiveComponent('users')}
+            className={`cursor-pointer p-2 ${activeComponent === "users" ? "bg-gray-200" : ""}`}
+            onClick={() => setActiveComponent("users")}
           >
             Users
           </li>
           <li
-            className={`cursor-pointer p-2 ${activeComponent === 'Site Info' ? 'bg-gray-200' : ''}`}
-            onClick={() => setActiveComponent('site-info')}
+            className={`cursor-pointer p-2 ${activeComponent === "Site Info" ? "bg-gray-200" : ""}`}
+            onClick={() => setActiveComponent("site-info")}
           >
             Site Info
           </li>
           <li
-            className={`cursor-pointer p-2 ${activeComponent === 'orders' ? 'bg-gray-200' : ''}`}
-            onClick={() => setActiveComponent('orders')}
+            className={`cursor-pointer p-2 ${activeComponent === "orders" ? "bg-gray-200" : ""}`}
+            onClick={() => setActiveComponent("orders")}
           >
             Orders
           </li>
           <li
-            className={`cursor-pointer p-2 ${activeComponent === 'drugs' ? 'bg-gray-200' : ''}`}
-            onClick={() => setActiveComponent('drugs')}
+            className={`cursor-pointer p-2 ${activeComponent === "drugs" ? "bg-gray-200" : ""}`}
+            onClick={() => setActiveComponent("drugs")}
           >
             Products
           </li>
           <li
-            className={`cursor-pointer p-2 ${activeComponent === 'revenue' ? 'bg-gray-200' : ''}`}
-            onClick={() => setActiveComponent('revenue')}
+            className={`cursor-pointer p-2 ${activeComponent === "revenue" ? "bg-gray-200" : ""}`}
+            onClick={() => setActiveComponent("revenue")}
           >
             Revenue
           </li>
           <li
-            className={`cursor-pointer p-2 ${activeComponent === 'user_statistics' ? 'bg-gray-200' : ''}`}
-            onClick={() => setActiveComponent('user_statistics')}
+            className={`cursor-pointer p-2 ${activeComponent === "user_statistics" ? "bg-gray-200" : ""}`}
+            onClick={() => setActiveComponent("user_statistics")}
           >
             User Statistics
           </li>
           <li
-            className={`cursor-pointer p-2 ${activeComponent === 'location_statistics' ? 'bg-gray-200' : ''}`}
-            onClick={() => setActiveComponent('location_statistics')}
+            className={`cursor-pointer p-2 ${activeComponent === "location_statistics" ? "bg-gray-200" : ""}`}
+            onClick={() => setActiveComponent("location_statistics")}
           >
             Location Statistics
           </li>

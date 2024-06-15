@@ -1,6 +1,11 @@
-import { useEffect, useState } from 'react';
-import ModalForm from './ModalForm';
-import { fetchTeams, createTeam, updateTeam, deleteTeam } from '@/services/adminService';
+import { useEffect, useState } from "react";
+import ModalForm from "./ModalForm";
+import {
+  fetchTeams,
+  createTeam,
+  updateTeam,
+  deleteTeam,
+} from "@/services/adminService";
 
 // Define the Team type
 interface Team {
@@ -14,7 +19,7 @@ interface Team {
 const TeamsPage = () => {
   const [items, setItems] = useState<Team[]>([]);
   const [formData, setFormData] = useState<Partial<Team>>({});
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState<number | null>(null);
@@ -27,7 +32,9 @@ const TeamsPage = () => {
     fetchData();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -39,17 +46,17 @@ const TeamsPage = () => {
     try {
       if (isEditing && currentId !== null) {
         await updateTeam(currentId, formData);
-        setMessage('Resource updated successfully!');
+        setMessage("Resource updated successfully!");
       } else {
         await createTeam(formData);
-        setMessage('Resource created successfully!');
+        setMessage("Resource created successfully!");
       }
       setIsModalOpen(false);
       const data = await fetchTeams();
       setItems(data);
     } catch (error) {
-      console.error('Operation failed:', error);
-      setMessage('Failed to perform operation.');
+      console.error("Operation failed:", error);
+      setMessage("Failed to perform operation.");
     }
   };
 
@@ -63,12 +70,12 @@ const TeamsPage = () => {
   const handleDelete = async (id: number) => {
     try {
       await deleteTeam(id);
-      setMessage('Resource deleted successfully!');
+      setMessage("Resource deleted successfully!");
       const data = await fetchTeams();
       setItems(data);
     } catch (error) {
-      console.error('Deletion failed:', error);
-      setMessage('Failed to delete resource.');
+      console.error("Deletion failed:", error);
+      setMessage("Failed to delete resource.");
     }
   };
 
@@ -118,7 +125,7 @@ const TeamsPage = () => {
         onSubmit={handleSubmit}
         formData={formData}
         handleChange={handleChange}
-        title={isEditing ? 'Edit Team' : 'Add Team'}
+        title={isEditing ? "Edit Team" : "Add Team"}
       />
       {message && <p className="mt-4">{message}</p>}
     </div>

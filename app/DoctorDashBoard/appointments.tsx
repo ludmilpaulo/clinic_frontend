@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { selectUser } from '@/redux/slices/authSlice';
-import axios from 'axios';
-import { baseAPI } from '@/utils/variables';
-import dayjs from 'dayjs';
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { selectUser } from "@/redux/slices/authSlice";
+import axios from "axios";
+import { baseAPI } from "@/utils/variables";
+import dayjs from "dayjs";
 
 // Define the Appointment type
 interface Appointment {
@@ -24,18 +24,19 @@ const Appointments: React.FC<AppointmentsProps> = ({ userId }) => {
 
   useEffect(() => {
     if (token && userId) {
-      axios.get(`${baseAPI}/appointment/doctor-appointments/${userId}`, {
-        headers: {
-          'Authorization': `Token ${token}`
-        }
-      })
-      .then(response => {
-        console.log("appointment data", response.data);
-        setAppointments(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching appointments:', error);
-      });
+      axios
+        .get(`${baseAPI}/appointment/doctor-appointments/${userId}`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("appointment data", response.data);
+          setAppointments(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching appointments:", error);
+        });
     }
   }, [token, userId]);
 
@@ -45,10 +46,19 @@ const Appointments: React.FC<AppointmentsProps> = ({ userId }) => {
         <h2 className="text-2xl font-bold mb-4">My Appointments</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {appointments.map((appointment) => (
-            <div key={appointment.id} className="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow duration-200">
-              <h3 className="text-lg font-semibold mb-2">{dayjs(appointment.appointment_time).format('MMMM D, YYYY')}</h3>
-              <p className="text-sm text-gray-600">Patient: {appointment.patient_name}</p>
-              <p className="text-sm text-gray-600">Time: {dayjs(appointment.appointment_time).format('h:mm A')}</p>
+            <div
+              key={appointment.id}
+              className="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow duration-200"
+            >
+              <h3 className="text-lg font-semibold mb-2">
+                {dayjs(appointment.appointment_time).format("MMMM D, YYYY")}
+              </h3>
+              <p className="text-sm text-gray-600">
+                Patient: {appointment.patient_name}
+              </p>
+              <p className="text-sm text-gray-600">
+                Time: {dayjs(appointment.appointment_time).format("h:mm A")}
+              </p>
             </div>
           ))}
         </div>

@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Image from 'next/image';
-import { Transition } from '@headlessui/react';
-import { SocialIcon } from 'react-social-icons';
-import { baseAPI } from '@/utils/variables';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Image from "next/image";
+import { Transition } from "@headlessui/react";
+import { SocialIcon } from "react-social-icons";
+import { baseAPI } from "@/utils/variables";
 
 const AboutPage: React.FC = () => {
   const [data, setData] = useState<any>(null);
@@ -12,14 +12,15 @@ const AboutPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get(`${baseAPI}/info/about-us/`)
-      .then(response => {
+    axios
+      .get(`${baseAPI}/info/about-us/`)
+      .then((response) => {
         console.log("about data", response.data);
         const aboutData = response.data[0]; // Access the first element of the array
         setData(aboutData);
         setLoading(false);
       })
-      .catch(error => {
+      .catch((error) => {
         setError(error.message);
         setLoading(false);
       });
@@ -43,7 +44,9 @@ const AboutPage: React.FC = () => {
 
       {!loading && (
         <>
-          {error && <div className="text-center text-red-500 mb-4">Error: {error}</div>}
+          {error && (
+            <div className="text-center text-red-500 mb-4">Error: {error}</div>
+          )}
           {data && (
             <div className="relative bg-white shadow-lg rounded-lg p-6">
               {data.backgroundImage && (
@@ -69,20 +72,49 @@ const AboutPage: React.FC = () => {
                     />
                   </div>
                 )}
-                <h1 className="text-4xl font-bold mb-4 text-gray-800">{data.title}</h1>
-                <p className="text-gray-700 text-center mb-8 leading-relaxed" dangerouslySetInnerHTML={{ __html: data.about }} />
+                <h1 className="text-4xl font-bold mb-4 text-gray-800">
+                  {data.title}
+                </h1>
+                <p
+                  className="text-gray-700 text-center mb-8 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: data.about }}
+                />
                 <div className="flex space-x-4 mb-8">
                   {data.linkedin && (
-                    <SocialIcon url={data.linkedin} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
+                    <SocialIcon
+                      url={data.linkedin}
+                      className="cursor-pointer"
+                      target="_blank"
+                      fgColor="#fff"
+                      style={{ height: 35, width: 35 }}
+                    />
                   )}
                   {data.facebook && (
-                    <SocialIcon url={data.facebook} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
+                    <SocialIcon
+                      url={data.facebook}
+                      className="cursor-pointer"
+                      target="_blank"
+                      fgColor="#fff"
+                      style={{ height: 35, width: 35 }}
+                    />
                   )}
                   {data.twitter && (
-                    <SocialIcon url={data.twitter} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
+                    <SocialIcon
+                      url={data.twitter}
+                      className="cursor-pointer"
+                      target="_blank"
+                      fgColor="#fff"
+                      style={{ height: 35, width: 35 }}
+                    />
                   )}
                   {data.instagram && (
-                    <SocialIcon url={data.instagram} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
+                    <SocialIcon
+                      url={data.instagram}
+                      className="cursor-pointer"
+                      target="_blank"
+                      fgColor="#fff"
+                      style={{ height: 35, width: 35 }}
+                    />
                   )}
                 </div>
               </div>

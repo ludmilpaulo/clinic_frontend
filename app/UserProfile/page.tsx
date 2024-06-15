@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { baseAPI } from '@/utils/variables';
-import { RootState } from '@/redux/store';
-import { selectUser } from '@/redux/slices/authSlice';
-import withAuth from '@/components/PrivateRoute';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { baseAPI } from "@/utils/variables";
+import { RootState } from "@/redux/store";
+import { selectUser } from "@/redux/slices/authSlice";
+import withAuth from "@/components/PrivateRoute";
 
 interface OrderItem {
   id: number;
@@ -44,39 +44,44 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (token && userId) {
-      axios.get(`${baseAPI}/account/account/profile/${userId}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      .then(response => {
-        const userData = response.data;
-        axios.get(`${baseAPI}/account/orders/user/${userId}/`, {
+      axios
+        .get(`${baseAPI}/account/account/profile/${userId}/`, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         })
-        .then(orderResponse => {
-          setUser({ ...userData, orders: orderResponse.data });
+        .then((response) => {
+          const userData = response.data;
+          axios
+            .get(`${baseAPI}/account/orders/user/${userId}/`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+            .then((orderResponse) => {
+              setUser({ ...userData, orders: orderResponse.data });
+            })
+            .catch((error) =>
+              console.error("Failed to fetch user orders:", error),
+            );
         })
-        .catch(error => console.error('Failed to fetch user orders:', error));
-      })
-      .catch(error => console.error('Failed to fetch user data:', error));
+        .catch((error) => console.error("Failed to fetch user data:", error));
     }
   }, [token, userId]);
 
   const handleUpdateProfile = () => {
     if (user && token) {
-      axios.put(`${baseAPI}/account/account/update/${userId}/`, user, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      .then(response => {
-        setUser(response.data);
-        setIsEditing(false);
-      })
-      .catch(error => console.error('Failed to update user data:', error));
+      axios
+        .put(`${baseAPI}/account/account/update/${userId}/`, user, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setUser(response.data);
+          setIsEditing(false);
+        })
+        .catch((error) => console.error("Failed to update user data:", error));
     }
   };
 
@@ -145,7 +150,9 @@ const ProfilePage = () => {
               type="text"
               value={user.postal_code}
               className="w-full p-2 border border-gray-300 rounded mt-1"
-              onChange={(e) => setUser({ ...user, postal_code: e.target.value })}
+              onChange={(e) =>
+                setUser({ ...user, postal_code: e.target.value })
+              }
               disabled={!isEditing}
             />
           </div>
@@ -195,13 +202,15 @@ const ProfilePage = () => {
               user.orders.map((order: Order) => (
                 <tr key={order.id}>
                   <td className="p-2 border-b">{order.id}</td>
-                  <td className="p-2 border-b">{new Date(order.created_at).toLocaleDateString()}</td>
+                  <td className="p-2 border-b">
+                    {new Date(order.created_at).toLocaleDateString()}
+                  </td>
                   <td className="p-2 border-b">{order.status}</td>
                   <td className="p-2 border-b">
                     {order.invoice ? (
                       <span
                         className="text-blue-500 cursor-pointer"
-                        onClick={() => window.location.href = order.invoice}
+                        onClick={() => (window.location.href = order.invoice)}
                       >
                         Download
                       </span>
@@ -213,7 +222,9 @@ const ProfilePage = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="p-2 text-center text-gray-500">No orders found.</td>
+                <td colSpan={4} className="p-2 text-center text-gray-500">
+                  No orders found.
+                </td>
               </tr>
             )}
           </tbody>

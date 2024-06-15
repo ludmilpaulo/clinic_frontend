@@ -1,81 +1,104 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { selectUser } from '@/redux/slices/authSlice';
-import axios from 'axios';
-import { baseAPI } from '@/utils/variables';
-import { getConsultationCategories } from '@/services/consultationCategoryService';
-import { DoctorAvailability, Slot, ConsultationCategory, Appointment } from '@/utils/types';
-
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { selectUser } from "@/redux/slices/authSlice";
+import axios from "axios";
+import { baseAPI } from "@/utils/variables";
+import { getConsultationCategories } from "@/services/consultationCategoryService";
+import {
+  DoctorAvailability,
+  Slot,
+  ConsultationCategory,
+  Appointment,
+} from "@/utils/types";
 
 const daysOfWeekMap: { [key: string]: string } = {
-  '0': 'Sunday',
-  '1': 'Monday',
-  '2': 'Tuesday',
-  '3': 'Wednesday',
-  '4': 'Thursday',
-  '5': 'Friday',
-  '6': 'Saturday',
+  "0": "Sunday",
+  "1": "Monday",
+  "2": "Tuesday",
+  "3": "Wednesday",
+  "4": "Thursday",
+  "5": "Friday",
+  "6": "Saturday",
 };
 
 const Appointments: React.FC = () => {
-  const [category, setCategory] = useState<string>('');
-  const [availabilities, setAvailabilities] = useState<DoctorAvailability[]>([]);
-  const [selectedSlot, setSelectedSlot] = useState<Slot & { availability_id: number; doctor_user_id: number } | null>(null);
+  const [category, setCategory] = useState<string>("");
+  const [availabilities, setAvailabilities] = useState<DoctorAvailability[]>(
+    [],
+  );
+  const [selectedSlot, setSelectedSlot] = useState<
+    (Slot & { availability_id: number; doctor_user_id: number }) | null
+  >(null);
   const [categories, setCategories] = useState<ConsultationCategory[]>([]);
   const user = useSelector((state: RootState) => selectUser(state));
   const token = user?.token;
 
   useEffect(() => {
     if (token) {
-      getConsultationCategories(token).then(response => {
-        setCategories(response);
-      }).catch((error: unknown) => {
-        if (axios.isAxiosError(error)) {
-          console.error('Error fetching categories:', error.response?.data);
-        } else {
-          console.error('Error fetching categories:', error);
-        }
-      });
+      getConsultationCategories(token)
+        .then((response) => {
+          setCategories(response);
+        })
+        .catch((error: unknown) => {
+          if (axios.isAxiosError(error)) {
+            console.error("Error fetching categories:", error.response?.data);
+          } else {
+            console.error("Error fetching categories:", error);
+          }
+        });
     }
   }, [token]);
 
   useEffect(() => {
     if (category && token) {
       console.log(`Fetching availabilities for category: ${category}`);
-      axios.get<DoctorAvailability[]>(`${baseAPI}/appointment/doctor-availability/${category}/`, {
-        headers: {
-          'Authorization': `Token ${token}`
-        }
-      })
-      .then(response => {
-        console.log('Availabilities fetched:', response.data);
-        const updatedAvailabilities = response.data.map((availability: DoctorAvailability) => {
-          return {
-            ...availability,
-            slots: generateSlots(availability).map(slot => ({
-              time: slot,
-              booked: false
-            }))
-          };
+      axios
+        .get<DoctorAvailability[]>(
+          `${baseAPI}/appointment/doctor-availability/${category}/`,
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          },
+        )
+        .then((response) => {
+          console.log("Availabilities fetched:", response.data);
+          const updatedAvailabilities = response.data.map(
+            (availability: DoctorAvailability) => {
+              return {
+                ...availability,
+                slots: generateSlots(availability).map((slot) => ({
+                  time: slot,
+                  booked: false,
+                })),
+              };
+            },
+          );
+          setAvailabilities(updatedAvailabilities);
+        })
+        .catch((error: unknown) => {
+          if (axios.isAxiosError(error)) {
+            console.error(
+              "Error fetching availabilities:",
+              error.response?.data,
+            );
+          } else {
+            console.error("Error fetching availabilities:", error);
+          }
         });
-        setAvailabilities(updatedAvailabilities);
-      })
-      .catch((error: unknown) => {
-        if (axios.isAxiosError(error)) {
-          console.error('Error fetching availabilities:', error.response?.data);
-        } else {
-          console.error('Error fetching availabilities:', error);
-        }
-      });
     }
   }, [category, token]);
 
   const generateSlots = (availability: DoctorAvailability): Date[] => {
     const slots: Date[] = [];
-    const startTime = new Date(`${availability.year}-${String(availability.month).padStart(2, '0')}-${String(availability.day_of_month).padStart(2, '0')}T${availability.start_time}`);
-    const endTime = new Date(`${availability.year}-${String(availability.month).padStart(2, '0')}-${String(availability.day_of_month).padStart(2, '0')}T${availability.end_time}`);
+    const startTime = new Date(
+      `${availability.year}-${String(availability.month).padStart(2, "0")}-${String(availability.day_of_month).padStart(2, "0")}T${availability.start_time}`,
+    );
+    const endTime = new Date(
+      `${availability.year}-${String(availability.month).padStart(2, "0")}-${String(availability.day_of_month).padStart(2, "0")}T${availability.end_time}`,
+    );
     const currentTime = new Date(startTime);
 
     while (currentTime < endTime) {
@@ -93,37 +116,47 @@ const Appointments: React.FC = () => {
         doctor: selectedSlot.doctor_user_id,
         category: parseInt(category),
         appointment_time: selectedSlot.time.toISOString(),
-        status: 'scheduled',
+        status: "scheduled",
         paid: false,
-        fee: 0.00,
+        fee: 0.0,
       };
 
-      console.log('Sending appointment data:', appointmentData);
+      console.log("Sending appointment data:", appointmentData);
 
       try {
-        const response = await axios.post(`${baseAPI}/appointment/appointments/`, appointmentData, {
-          headers: {
-            'Authorization': `Token ${token}`
-          }
-        });
-        alert('Appointment booked successfully!');
-        console.log('Appointment response:', response.data);
+        const response = await axios.post(
+          `${baseAPI}/appointment/appointments/`,
+          appointmentData,
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          },
+        );
+        alert("Appointment booked successfully!");
+        console.log("Appointment response:", response.data);
         // Mark slot as booked
-        setAvailabilities(availabilities.map(avail => 
-          avail.id === selectedSlot.availability_id ? {
-            ...avail,
-            slots: avail.slots.map(slot => 
-              slot.time.getTime() === selectedSlot.time.getTime() ? { ...slot, booked: true } : slot
-            )
-          } : avail
-        ));
+        setAvailabilities(
+          availabilities.map((avail) =>
+            avail.id === selectedSlot.availability_id
+              ? {
+                  ...avail,
+                  slots: avail.slots.map((slot) =>
+                    slot.time.getTime() === selectedSlot.time.getTime()
+                      ? { ...slot, booked: true }
+                      : slot,
+                  ),
+                }
+              : avail,
+          ),
+        );
         setSelectedSlot(null);
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
-          console.error('Error booking appointment:', error.response?.data);
-          alert('An appointment with this doctor at this time already exists.');
+          console.error("Error booking appointment:", error.response?.data);
+          alert("An appointment with this doctor at this time already exists.");
         } else {
-          console.error('Error booking appointment:', error);
+          console.error("Error booking appointment:", error);
         }
       }
     }
@@ -133,15 +166,19 @@ const Appointments: React.FC = () => {
     <div>
       <h1>Appointments</h1>
       <div className="mb-4">
-        <label className="block text-sm font-bold mb-2">Consultation Category</label>
+        <label className="block text-sm font-bold mb-2">
+          Consultation Category
+        </label>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded"
         >
           <option value="">Select Category</option>
-          {categories.map(category => (
-            <option key={category.id} value={category.id}>{category.name}</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
           ))}
         </select>
       </div>
@@ -149,19 +186,44 @@ const Appointments: React.FC = () => {
         <h2>Available Slots</h2>
         {availabilities.length > 0 ? (
           availabilities.map((availability) => {
-            const days = availability.days_of_week ? availability.days_of_week.split(',').map(day => daysOfWeekMap[day.trim() as keyof typeof daysOfWeekMap]).join(', ') : '';
+            const days = availability.days_of_week
+              ? availability.days_of_week
+                  .split(",")
+                  .map(
+                    (day) =>
+                      daysOfWeekMap[day.trim() as keyof typeof daysOfWeekMap],
+                  )
+                  .join(", ")
+              : "";
             return (
               <div key={availability.id} className="mt-4">
-                <h3 className="text-lg font-semibold">{availability.doctor_name} {availability.doctor_surname} available on {days} {availability.day_of_month ? `and day ${availability.day_of_month}` : ''} in {availability.month}/{availability.year}</h3>
+                <h3 className="text-lg font-semibold">
+                  {availability.doctor_name} {availability.doctor_surname}{" "}
+                  available on {days}{" "}
+                  {availability.day_of_month
+                    ? `and day ${availability.day_of_month}`
+                    : ""}{" "}
+                  in {availability.month}/{availability.year}
+                </h3>
                 <div className="grid grid-cols-3 gap-2">
                   {availability.slots.map((slot, index) => (
                     <button
                       key={index}
-                      onClick={() => setSelectedSlot({ availability_id: availability.id, doctor_user_id: availability.doctor_user_id, time: slot.time, booked: slot.booked })}
-                      className={`p-2 rounded ${slot.booked ? 'bg-red-500' : selectedSlot?.availability_id === availability.id && selectedSlot?.time.getTime() === slot.time.getTime() ? 'bg-green-500' : 'bg-gray-300'}`}
+                      onClick={() =>
+                        setSelectedSlot({
+                          availability_id: availability.id,
+                          doctor_user_id: availability.doctor_user_id,
+                          time: slot.time,
+                          booked: slot.booked,
+                        })
+                      }
+                      className={`p-2 rounded ${slot.booked ? "bg-red-500" : selectedSlot?.availability_id === availability.id && selectedSlot?.time.getTime() === slot.time.getTime() ? "bg-green-500" : "bg-gray-300"}`}
                       disabled={slot.booked}
                     >
-                      {slot.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {slot.time.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </button>
                   ))}
                 </div>
@@ -174,7 +236,13 @@ const Appointments: React.FC = () => {
       </div>
       {selectedSlot && (
         <div className="mt-4">
-          <h3>Selected Slot: {selectedSlot.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h3>
+          <h3>
+            Selected Slot:{" "}
+            {selectedSlot.time.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </h3>
           <button
             onClick={handleBooking}
             className="mt-2 bg-blue-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"

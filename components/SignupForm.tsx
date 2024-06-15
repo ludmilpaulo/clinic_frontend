@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { signup } from '@/services/authService';
-import Link from 'next/link';
-import { Transition } from '@headlessui/react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signup } from "@/services/authService";
+import Link from "next/link";
+import { Transition } from "@headlessui/react";
 import { useDispatch } from "react-redux";
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from "lucide-react";
 import { loginUser } from "@/redux/slices/authSlice";
 
 const SignupForm = () => {
   const dispatch = useDispatch();
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -29,15 +29,15 @@ const SignupForm = () => {
       if (data.error) {
         setError(data.error);
         setLoading(false);
-        alert(data.error);  // Display alert with error message
+        alert(data.error); // Display alert with error message
       } else {
         dispatch(loginUser(data));
-        alert('Signup successful. Please log in.');
-        router.push('/');
+        alert("Signup successful. Please log in.");
+        router.push("/");
       }
     } catch (err) {
-      setError('Failed to sign up. Please try again.');
-      alert('Failed to sign up. Please try again.');  // Display generic error message
+      setError("Failed to sign up. Please try again.");
+      alert("Failed to sign up. Please try again."); // Display generic error message
     }
     setLoading(false);
   };
@@ -58,11 +58,15 @@ const SignupForm = () => {
         </div>
       </Transition>
       <div className="bg-white p-10 rounded-3xl shadow-lg w-full max-w-md">
-        <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">Create Account</h1>
+        <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
+          Create Account
+        </h1>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2 text-gray-700">Username</label>
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Username
+            </label>
             <input
               type="text"
               value={username}
@@ -72,7 +76,9 @@ const SignupForm = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2 text-gray-700">Email</label>
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -82,9 +88,11 @@ const SignupForm = () => {
             />
           </div>
           <div className="mb-4 relative">
-            <label className="block text-sm font-semibold mb-2 text-gray-700">Password</label>
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Password
+            </label>
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
@@ -98,13 +106,18 @@ const SignupForm = () => {
               {showPassword ? <EyeOff size={24} /> : <Eye size={24} />}
             </button>
           </div>
-          <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded w-full transition duration-200">
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded w-full transition duration-200"
+          >
             Sign Up
           </button>
         </form>
         <div className="mt-6 text-center">
           <Link href="/Login">
-            <span className="text-blue-500 hover:underline cursor-pointer">Already have an account? Log in</span>
+            <span className="text-blue-500 hover:underline cursor-pointer">
+              Already have an account? Log in
+            </span>
           </Link>
         </div>
       </div>

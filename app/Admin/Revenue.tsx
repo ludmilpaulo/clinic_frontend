@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import 'chart.js/auto';
-import { fetchSalesSummary } from '@/services/adminService';
+import React, { useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
+import "chart.js/auto";
+import { fetchSalesSummary } from "@/services/adminService";
 
 const Revenue: React.FC = () => {
   const [salesSummary, setSalesSummary] = useState({
@@ -20,13 +20,17 @@ const Revenue: React.FC = () => {
   }, []);
 
   const data = {
-    labels: ['Daily Sales', 'Monthly Sales', 'Yearly Sales'],
+    labels: ["Daily Sales", "Monthly Sales", "Yearly Sales"],
     datasets: [
       {
-        label: 'Sales',
-        data: [salesSummary.daily_sales, salesSummary.monthly_sales, salesSummary.yearly_sales],
-        backgroundColor: ['rgba(75, 192, 192, 0.2)'],
-        borderColor: ['rgba(75, 192, 192, 1)'],
+        label: "Sales",
+        data: [
+          salesSummary.daily_sales,
+          salesSummary.monthly_sales,
+          salesSummary.yearly_sales,
+        ],
+        backgroundColor: ["rgba(75, 192, 192, 0.2)"],
+        borderColor: ["rgba(75, 192, 192, 1)"],
         borderWidth: 1,
       },
     ],
@@ -41,7 +45,7 @@ const Revenue: React.FC = () => {
   };
 
   return (
-    <div className='bg-white'>
+    <div className="bg-white">
       <h1 className="text-2xl font-bold mb-4">Revenue</h1>
       <Bar data={data} options={options} />
     </div>

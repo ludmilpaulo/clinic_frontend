@@ -1,6 +1,5 @@
-import { fetchUsers } from '@/services/adminService';
-import React, { useEffect, useState } from 'react';
-
+import { fetchUsers } from "@/services/adminService";
+import React, { useEffect, useState } from "react";
 
 interface User {
   id: number;

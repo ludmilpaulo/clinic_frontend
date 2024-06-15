@@ -1,10 +1,14 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useEffect, useState } from 'react';
-import { Drug } from '@/utils/types';
+import React, { useEffect, useState } from "react";
+import { Drug } from "@/utils/types";
 import { useDispatch, useSelector } from "react-redux";
-import { updateBasket, selectCartItems, decreaseBasket } from '@/redux/slices/basketSlice'; // Update the import path as needed
+import {
+  updateBasket,
+  selectCartItems,
+  decreaseBasket,
+} from "@/redux/slices/basketSlice"; // Update the import path as needed
 
 type Props = {
   drug: Drug;
@@ -18,7 +22,8 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
   const [inCart, setInCart] = useState(false);
 
   const handleAdd = (drug: Drug) => {
-    const currentCartQuantity = cartItems.find((item) => item.id === drug.id)?.quantity ?? 0;
+    const currentCartQuantity =
+      cartItems.find((item) => item.id === drug.id)?.quantity ?? 0;
     if (currentCartQuantity < drug.quantity_available) {
       dispatch(updateBasket(drug));
     } else {
@@ -79,7 +84,9 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
             >
               -
             </button>
-            <span className="text-lg">{cartItems.find((item) => item.id === drug.id)?.quantity ?? 0}</span>
+            <span className="text-lg">
+              {cartItems.find((item) => item.id === drug.id)?.quantity ?? 0}
+            </span>
             <button
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors duration-300"
               onClick={() => handleAdd(drug)}

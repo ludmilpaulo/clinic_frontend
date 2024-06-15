@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'https://api.pasfastgateway.com'; // Replace with actual API base URL
-const API_KEY = 'your_api_key'; // Replace with your actual API key
+const API_BASE_URL = "https://api.pasfastgateway.com"; // Replace with actual API base URL
+const API_KEY = "your_api_key"; // Replace with your actual API key
 
 interface PaymentData {
   amount: number;
@@ -19,16 +19,16 @@ export const processPayment = async (paymentData: PaymentData) => {
       paymentData,
       {
         headers: {
-          'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${API_KEY}`,
+          "Content-Type": "application/json",
         },
-      }
+      },
     );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.data?.message) {
       throw new Error(error.response.data.message);
     }
-    throw new Error('Payment failed');
+    throw new Error("Payment failed");
   }
 };
