@@ -56,13 +56,14 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
             <span>No Image Available</span>
           </div>
         )}
+        <p className="absolute top-2 right-2 font-semibold text-lg text-white bg-black bg-opacity-75 px-2 py-1 rounded">
+          R{drug.price}
+        </p>
       </div>
       <div className="relative p-4">
         <div className="mb-2 flex items-center justify-between">
           <p className="font-semibold text-lg text-gray-900">{drug.name}</p>
-          <p className="font-semibold text-lg text-gray-900">R{drug.price}</p>
         </div>
-       
         {drug.quantity_available < 10 && (
           <p className="text-red-500 text-sm mt-2">
             Warning: Low stock, only {drug.quantity_available} left!

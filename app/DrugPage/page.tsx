@@ -1,152 +1,120 @@
 "use client";
-import React, { useEffect, Suspense, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { FaTrashAlt } from 'react-icons/fa';
 import Image from 'next/image';
-import axios from 'axios';
-import { FaShoppingCart, FaArrowLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { Transition } from '@headlessui/react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateBasket, selectCartItems } from '@/redux/slices/basketSlice'; // Update the import path as needed
-import { Drug } from '@/utils/types';
-import { baseAPI } from '@/utils/variables';
+import { selectCartItems, updateBasket, decreaseBasket, removeFromBasket, clearCart } from '@/redux/slices/basketSlice'; // Update the import path as needed
+import { useRouter } from 'next/navigation';
+import { Drug } from '@/utils/types'; // Import the Drug interface
 import withActiveUser from '@/hoc/withActiveUser';
 
-const DrugPage: React.FC = () => {
-  const [drug, setDrug] = useState<Drug | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const dispatch = useDispatch();
+const CartPage: React.FC = () => {
   const cartItems = useSelector(selectCartItems);
+  const dispatch = useDispatch();
+  const router = useRouter();
 
-  const drugId = searchParams.get('id');
-
-  useEffect(() => {
-
-    if (drugId) {
-      axios.get(`${baseAPI}/pharmacy/pharmacy/detail/${drugId}/`)
-        .then(response => {
-          setDrug(response.data);
-          setLoading(false);
-        })
-        .catch(error => {
-          setError(error.message);
-          setLoading(false);
-        });
-    }
-  }, [drugId]);
-
-  const handleAddToCart = (drug: Drug) => {
-    dispatch(updateBasket(drug));
+  const handleIncrease = (item: Drug) => {
+    dispatch(updateBasket({ ...item, quantity: item.quantity ? item.quantity + 1 : 1 }));
   };
 
-  const isInCart = (drug: Drug) => {
-    return cartItems.some(item => item.id === drug.id);
+  const handleDecrease = (item: Drug) => {
+    dispatch(decreaseBasket(item.id));
   };
 
-  const nextSlide = () => {
-    if (drug && drug.image_urls) {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % drug.image_urls.length);
-    }
+  const handleRemove = (id: number) => {
+    dispatch(removeFromBasket(id));
   };
 
-  const prevSlide = () => {
-    if (drug && drug.image_urls) {
-      setCurrentImageIndex((prevIndex) => (prevIndex === 0 ? drug.image_urls.length - 1 : prevIndex - 1));
-    }
+  const handleClearCart = () => {
+    dispatch(clearCart());
   };
+
+  const handleCheckout = () => {
+    router.push('/CheckoutPage'); // Redirect to the checkout page
+  };
+
+  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * (item.quantity || 1), 0);
 
   return (
-    <div className="container mx-auto pt-56">
-      <Transition
-        show={loading}
-        enter="transition-opacity duration-300"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-300"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
-          <div className="w-32 h-32 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-center">Shopping Cart</h1>
+      {cartItems.length === 0 ? (
+        <div className="text-center text-gray-600">
+          <p>Your cart is empty.</p>
+          <p>Continue shopping to add items to your cart.</p>
         </div>
-      </Transition>
-
-      {!loading && (
+      ) : (
         <>
-          {error && <div className="text-center text-red-500 mb-4">Error: {error}</div>}
-          {drug && (
-            <div className="bg-white shadow-lg rounded-lg p-6">
-              <button
-                className="flex items-center text-blue-500 hover:text-blue-700 transition-colors duration-300 mb-4"
-                onClick={() => router.back()}
-              >
-                <FaArrowLeft className="mr-2" /> Back to Products
-              </button>
-              <div className="flex flex-col md:flex-row">
-                <div className="w-full md:w-1/2 relative mb-4 md:mb-0">
-                  {drug.image_urls && drug.image_urls.length > 0 ? (
-                    <>
-                      <Image
-                        src={drug.image_urls[currentImageIndex]}
-                        alt={drug.name}
-                        layout="fill"
-                        objectFit="cover"
-                        className="rounded"
-                      />
-                      <button
-                        className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-600 transition-colors duration-300"
-                        onClick={prevSlide}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold">Cart Items</h2>
+            <button 
+              onClick={handleClearCart} 
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-300"
+            >
+              Clear Cart
+            </button>
+          </div>
+          <div className="bg-white shadow-lg rounded-lg p-6">
+            {cartItems.map((item) => (
+              <div key={item.id} className="flex justify-between items-center border-b pb-4 mb-4">
+                <div className="flex items-center space-x-4">
+                  <div className="relative w-20 h-20">
+                    <Image 
+                      src={item.image_urls[0]} 
+                      alt={item.name} 
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">{item.name}</h3>
+                    <p className="text-gray-600">R{item.price}</p>
+                    <div className="flex items-center space-x-2 mt-2">
+                      <button 
+                        onClick={() => handleDecrease(item)} 
+                        className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 transition-colors duration-300"
                       >
-                        <FaChevronLeft />
+                        -
                       </button>
-                      <button
-                        className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-600 transition-colors duration-300"
-                        onClick={nextSlide}
+                      <span className="font-semibold text-lg">{item.quantity}</span>
+                      <button 
+                        onClick={() => handleIncrease(item)} 
+                        className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 transition-colors duration-300"
                       >
-                        <FaChevronRight />
+                        +
                       </button>
-                    </>
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded">
-                      <span>No Images Available</span>
                     </div>
-                  )}
+                  </div>
                 </div>
-                <div className="w-full md:w-1/2 md:pl-6">
-                  <h1 className="text-2xl font-bold mb-2">{drug.name}</h1>
-                  <p className="text-lg font-semibold text-gray-700 mb-4">R{drug.price}</p>
-                  <p className="text-gray-600 mb-2"><strong>Category:</strong> {drug.category_name}</p>
-                  <div className="text-gray-600 mb-4" dangerouslySetInnerHTML={{ __html: drug.description }} />
-                  {drug.quantity_available < 10 && (
-                    <p className="text-red-500 text-sm mb-4">
-                      Warning: Low stock, only {drug.quantity_available} left!
-                    </p>
-                  )}
-                  <button
-                    className={`flex items-center justify-center bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600 transition-colors duration-300 ${isInCart(drug) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    onClick={() => handleAddToCart(drug)}
-                    disabled={isInCart(drug)}
+                <div className="flex items-center space-x-4">
+                  <p className="text-lg font-semibold">R{(item.price * (item.quantity || 1)).toFixed(2)}</p>
+                  <button 
+                    onClick={() => handleRemove(item.id)} 
+                    className="text-red-500 hover:text-red-700 transition-colors duration-300"
                   >
-                    <FaShoppingCart className="mr-2" /> {isInCart(drug) ? 'Already in Cart' : 'Add to Cart'}
+                    <FaTrashAlt />
                   </button>
                 </div>
               </div>
+            ))}
+            <div className="flex justify-between items-center mt-6">
+              <h3 className="text-xl font-semibold">Total</h3>
+              <p className="text-2xl font-bold">R{totalPrice.toFixed(2)}</p>
             </div>
-          )}
+            <div className="flex justify-end mt-6">
+              <button 
+                onClick={handleCheckout} 
+                className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors duration-300"
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
         </>
       )}
     </div>
   );
 };
 
-const DrugPageDetails = () => (
-  <Suspense fallback={<div>Loading...</div>}>
-    <DrugPage />
-  </Suspense>
-);
-
-
-export default DrugPageDetails;
+export default CartPage;

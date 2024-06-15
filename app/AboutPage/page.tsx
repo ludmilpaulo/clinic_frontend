@@ -37,7 +37,7 @@ const AboutPage: React.FC = () => {
         leaveTo="opacity-0"
       >
         <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
-          <div className="w-32 h-32 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+          <div className="w-32 h-32 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>
         </div>
       </Transition>
 
@@ -45,8 +45,19 @@ const AboutPage: React.FC = () => {
         <>
           {error && <div className="text-center text-red-500 mb-4">Error: {error}</div>}
           {data && (
-            <div className="bg-white shadow-lg rounded-lg p-6">
-              <div className="flex flex-col items-center">
+            <div className="relative bg-white shadow-lg rounded-lg p-6">
+              {data.backgroundImage && (
+                <div className="absolute inset-0 z-0">
+                  <Image
+                    src={data.backgroundImage}
+                    alt="Background"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-lg opacity-20"
+                  />
+                </div>
+              )}
+              <div className="relative flex flex-col items-center z-10">
                 {data.logo && (
                   <div className="relative w-32 h-32 mb-4">
                     <Image
@@ -59,7 +70,7 @@ const AboutPage: React.FC = () => {
                   </div>
                 )}
                 <h1 className="text-4xl font-bold mb-4 text-gray-800">{data.title}</h1>
-                <p className="text-gray-700 text-center mb-8" dangerouslySetInnerHTML={{ __html: data.about }} />
+                <p className="text-gray-700 text-center mb-8 leading-relaxed" dangerouslySetInnerHTML={{ __html: data.about }} />
                 <div className="flex space-x-4 mb-8">
                   {data.linkedin && (
                     <SocialIcon url={data.linkedin} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
@@ -74,7 +85,6 @@ const AboutPage: React.FC = () => {
                     <SocialIcon url={data.instagram} className="cursor-pointer" target="_blank" fgColor="#fff" style={{ height: 35, width: 35 }} />
                   )}
                 </div>
-              
               </div>
             </div>
           )}
