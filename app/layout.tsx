@@ -8,9 +8,18 @@ import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Men's Clinic - Comprehensive Men's Health Solutions",
-  description: "Men's Clinic offers specialized products for men's health, including solutions for erectile dysfunction and mental health support. Enhance your well-being with our expert-approved treatments.",
+  title: "Men's Clinic - Expert Men's Health Solutions",
+  description: "Discover specialized treatments for men's health at Men's Clinic. From erectile dysfunction to mental health support, our expert-approved products are designed to enhance your well-being. Join thousands of satisfied customers and take the first step towards a healthier you today.",
+  openGraph: {
+    images: [
+      {
+        url: "https://ludmil.pythonanywhere.com/media/logo/logo2_w3URzZg.png",
+        alt: "Men's Clinic Logo"
+      }
+    ]
+  }
 };
+
 
 
 export default function RootLayout({

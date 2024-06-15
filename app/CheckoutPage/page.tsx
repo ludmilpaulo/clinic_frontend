@@ -1,14 +1,17 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import { useSelector, useDispatch } from 'react-redux';
 import Head from 'next/head';
 import CryptoJS from 'crypto-js';
 import axios from 'axios';
 import OrderSummary from './OrderSummary';
 import BillingDetailsForm from './BillingDetailsForm';
 import { Transition } from '@headlessui/react';
-import { selectCartItems } from '@/redux/slices/basketSlice';
+
+import { selectCartItems, clearCart } from '@/redux/slices/basketSlice';
+import { selectUser } from '@/redux/slices/authSlice';
+import { baseAPI } from '@/utils/variables';
 
 interface FormState {
   name: string;
@@ -20,11 +23,80 @@ interface FormState {
 }
 
 const CheckoutPage: React.FC = () => {
+  const user = useSelector(selectUser);
+  const token = user?.token;
   const router = useRouter();
   const cartItems = useSelector(selectCartItems);
   const [loading, setLoading] = useState(false);
   const [showBillingForm, setShowBillingForm] = useState(false);
   const [formData, setFormData] = useState<FormState | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState('payfast');
+  const dispatch = useDispatch();
+
+  const [form, setForm] = useState<FormState>({
+    name: '',
+    email: '',
+    address: '',
+    city: '',
+    postalCode: '',
+    country: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm({
+      ...form,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (status: string) => {
+    setLoading(true);
+  
+    const orderData = {
+      token: token || null,
+      user_id: user?.user_id,
+      name: form.name,
+      email: form.email,
+      total_price: totalPrice,
+      address: form.address,
+      city: form.city,
+      postal_code: form.postalCode,
+      country: form.country,
+      payment_method: paymentMethod,
+      status,
+      items: cartItems.map(item => ({
+        id: item.id,
+        quantity: item.quantity
+      }))
+    };
+  
+    try {
+      const response = await fetch(`${baseAPI}/order/checkout/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
+      });
+  
+      if (response.ok) {
+        dispatch(clearCart());
+        if (status === 'completed') {
+          router.push('/thank-you');
+        }
+      } else {
+        const errorData = await response.json();
+        console.error('Error:', errorData);
+        alert(`Error: ${errorData.detail}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }
+  
+    setLoading(false);
+  };
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -47,13 +119,9 @@ const CheckoutPage: React.FC = () => {
   };
 
   const dataToString = (dataArray: Record<string, string>): string => {
-    let pfParamString = "";
-    for (let key in dataArray) {
-      if (dataArray.hasOwnProperty(key)) {
-        pfParamString += `${key}=${encodeURIComponent(dataArray[key].trim()).replace(/%20/g, "+")}&`;
-      }
-    }
-    return pfParamString.slice(0, -1);
+    return Object.keys(dataArray)
+      .map(key => `${key}=${encodeURIComponent(dataArray[key].trim()).replace(/%20/g, "+")}`)
+      .join('&');
   };
 
   const generatePaymentIdentifier = async (pfParamString: string) => {
@@ -93,11 +161,25 @@ const CheckoutPage: React.FC = () => {
     const paymentUUID = await generatePaymentIdentifier(pfParamString);
 
     if (paymentUUID) {
+      // Handle the submission before triggering the payment
+      await handleSubmit('pending');
+
+      // Add event listeners for payment completion and cancellation
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.status) {
+          if (event.data.status === 'completed') {
+            handleSubmit('completed');
+          } else if (event.data.status === 'cancelled') {
+            handleSubmit('canceled');
+          }
+        }
+      });
+
       // Trigger the PayFast modal popup
       window.payfast_do_onsite_payment({
         uuid: paymentUUID,
         return_url: process.env.NEXT_PUBLIC_RETURN_URL!,
-        cancel_url: process.env.NEXT_PUBLIC_RETURN_URL!,
+        cancel_url: process.env.NEXT_PUBLIC_CANCEL_URL!,
       });
     }
   };
