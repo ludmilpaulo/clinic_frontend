@@ -47,14 +47,14 @@ const DrugCard: React.FC<Props> = ({ drug }) => {
   return (
     <div className="relative bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-4">
       <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-      <div className="relative h-48 rounded-t-lg overflow-hidden">
+      <div className="relative w-full h-64 sm:h-72 md:h-80 lg:h-96 rounded-t-lg overflow-hidden">
         {drug.image_urls && drug.image_urls[currentImageIndex] ? (
           <Image
             src={drug.image_urls[currentImageIndex]}
             alt={drug.name}
             layout="fill"
-            objectFit="cover"
-            className="w-full h-full object-cover"
+            objectFit="contain"
+            className="w-full h-full object-contain"
           />
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
