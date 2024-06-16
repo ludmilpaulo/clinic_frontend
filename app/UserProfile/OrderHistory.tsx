@@ -26,7 +26,11 @@ const OrderHistory = ({ orders }: { orders: Order[] }) => (
                 {order.invoice ? (
                   <span
                     className="text-blue-500 cursor-pointer"
-                    onClick={() => (window.location.href = order.invoice)}
+                    onClick={() => {
+                      if (order.invoice) {
+                        window.location.href = order.invoice;
+                      }
+                    }}
                   >
                     Download
                   </span>

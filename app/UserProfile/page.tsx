@@ -12,6 +12,14 @@ import withAuth from "@/components/PrivateRoute";
 import Sidebar from "./Sidebar";
 import Loading from "./Loading";
 
+const ProfileInformation = dynamic(() => import("./ProfileInformation"), {
+  loading: () => <Loading loading={true} />,
+});
+
+const OrderHistory = dynamic(() => import("./OrderHistory"), {
+  loading: () => <Loading loading={true} />,
+});
+
 interface UserProfile {
   id: number;
   username: string;
@@ -35,13 +43,6 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeComponent, setActiveComponent] = useState<string>("ProfileInformation");
-
-  const ProfileInformation = dynamic(() => import("./ProfileInformation"), {
-    loading: () => <Loading loading={true} />,
-  });
-  const OrderHistory = dynamic(() => import("./OrderHistory"), {
-    loading: () => <Loading loading={true} />,
-  });
 
   useEffect(() => {
     if (token && userId) {
@@ -74,7 +75,7 @@ const ProfilePage = () => {
             console.error("User not found:", error);
             dispatch(logoutUser());
             dispatch(clearCart());
-            router.push("/Login");
+            router.push("/login");
           } else {
             console.error("Failed to fetch user data:", error);
             setError("Failed to fetch user data.");
@@ -112,9 +113,9 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="flex">
       <Sidebar setActiveComponent={setActiveComponent} />
-      <div className="ml-64">
+      <div className="flex-1 p-4 min-h-screen">
         {activeComponent === "ProfileInformation" && (
           <ProfileInformation user={user} handleUpdateProfile={handleUpdateProfile} />
         )}

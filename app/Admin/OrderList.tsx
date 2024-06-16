@@ -2,21 +2,30 @@ import React, { useEffect, useState } from "react";
 import { fetchOrders, updateOrderStatus } from "@/services/adminService";
 import { Transition } from "@headlessui/react";
 
-// Define the Order type
+// Define the Order and OrderItem types
+interface OrderItem {
+  id: number;
+  product: {
+    name: string;
+  } | null; // Handle potential null values
+  quantity: number;
+}
+
 interface Order {
   id: number;
-  user: {
-    username: string;
-  };
+  user:string;
   total_price: number;
   status: string;
   created_at: string;
+  address: string;
+  items: OrderItem[];
 }
 
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<string | null>(null);
+  const [viewingOrder, setViewingOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     async function loadOrders() {
@@ -95,6 +104,7 @@ const OrderList: React.FC = () => {
             <th className="px-4 py-2">Total Price</th>
             <th className="px-4 py-2">Status</th>
             <th className="px-4 py-2">Created At</th>
+            <th className="px-4 py-2">Address</th>
             <th className="px-4 py-2">Actions</th>
           </tr>
         </thead>
@@ -102,7 +112,7 @@ const OrderList: React.FC = () => {
           {orders.map((order) => (
             <tr key={order.id} className="border-b">
               <td className="px-4 py-2">{order.id}</td>
-              <td className="px-4 py-2">{order.user.username}</td>
+              <td className="px-4 py-2">{order?.user}</td>
               <td className="px-4 py-2">{order.total_price}</td>
               <td className="px-4 py-2">
                 <select
@@ -117,13 +127,38 @@ const OrderList: React.FC = () => {
                 </select>
               </td>
               <td className="px-4 py-2">{order.created_at}</td>
+              <td className="px-4 py-2">{order.address}</td>
               <td className="px-4 py-2">
-                {/* Add actions for editing/deleting orders if needed */}
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                  onClick={() => setViewingOrder(order)}
+                >
+                  View Products
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {viewingOrder && (
+        <div className="mt-4">
+          <h2 className="text-xl font-bold">Order Products</h2>
+          <ul className="list-disc ml-6">
+            {viewingOrder.items.map((item) => (
+              <li key={item.id}>
+                {item.product ? item.product.name : "Unknown Product"} - Quantity: {item.quantity}
+              </li>
+            ))}
+          </ul>
+          <button
+            className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+            onClick={() => setViewingOrder(null)}
+          >
+            Close
+          </button>
+        </div>
+      )}
     </div>
   );
 };

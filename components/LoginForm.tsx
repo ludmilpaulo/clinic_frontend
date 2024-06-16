@@ -37,7 +37,7 @@ const LoginForm = () => {
         if (data.is_staff) {
           router.push("/Admin");
         } else {
-          router.push("/");
+          router.push("/HomePage");
         }
       }
     } catch (err: unknown) {

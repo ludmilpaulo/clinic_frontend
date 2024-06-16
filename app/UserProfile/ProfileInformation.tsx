@@ -1,4 +1,3 @@
-// components/ProfileInformation.tsx
 import { useState } from "react";
 
 interface UserProfile {
@@ -22,9 +21,20 @@ const ProfileInformation = ({
   handleUpdateProfile: (user: UserProfile) => void;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [editedUser, setEditedUser] = useState<UserProfile>(user);
 
   const handleChange = (field: keyof UserProfile, value: string) => {
-    handleUpdateProfile({ ...user, [field]: value });
+    const updatedUser = { ...editedUser, [field]: value };
+    setEditedUser(updatedUser);
+    handleUpdateProfile(updatedUser);
+  };
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+    // Reset editedUser to the original user data if cancelling edit
+    if (isEditing) {
+      setEditedUser(user);
+    }
   };
 
   return (
@@ -35,7 +45,7 @@ const ProfileInformation = ({
           <label className="block text-gray-700">First Name</label>
           <input
             type="text"
-            value={user.first_name}
+            value={editedUser.first_name}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             onChange={(e) => handleChange("first_name", e.target.value)}
             disabled={!isEditing}
@@ -45,7 +55,7 @@ const ProfileInformation = ({
           <label className="block text-gray-700">Last Name</label>
           <input
             type="text"
-            value={user.last_name}
+            value={editedUser.last_name}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             onChange={(e) => handleChange("last_name", e.target.value)}
             disabled={!isEditing}
@@ -55,7 +65,7 @@ const ProfileInformation = ({
           <label className="block text-gray-700">Email</label>
           <input
             type="email"
-            value={user.email}
+            value={editedUser.email}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             disabled
           />
@@ -64,7 +74,7 @@ const ProfileInformation = ({
           <label className="block text-gray-700">Address</label>
           <input
             type="text"
-            value={user.address}
+            value={editedUser.address}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             onChange={(e) => handleChange("address", e.target.value)}
             disabled={!isEditing}
@@ -74,7 +84,7 @@ const ProfileInformation = ({
           <label className="block text-gray-700">City</label>
           <input
             type="text"
-            value={user.city}
+            value={editedUser.city}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             onChange={(e) => handleChange("city", e.target.value)}
             disabled={!isEditing}
@@ -84,7 +94,7 @@ const ProfileInformation = ({
           <label className="block text-gray-700">Postal Code</label>
           <input
             type="text"
-            value={user.postal_code}
+            value={editedUser.postal_code}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             onChange={(e) => handleChange("postal_code", e.target.value)}
             disabled={!isEditing}
@@ -94,7 +104,7 @@ const ProfileInformation = ({
           <label className="block text-gray-700">Country</label>
           <input
             type="text"
-            value={user.country}
+            value={editedUser.country}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             onChange={(e) => handleChange("country", e.target.value)}
             disabled={!isEditing}
@@ -102,21 +112,13 @@ const ProfileInformation = ({
         </div>
       </div>
       <div className="flex justify-end">
-        {isEditing ? (
-          <button
-            onClick={() => setIsEditing(false)}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Save
-          </button>
-        ) : (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Edit Profile
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={handleEditToggle}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          {isEditing ? "Save Changes" : "Edit Profile"}
+        </button>
       </div>
     </div>
   );

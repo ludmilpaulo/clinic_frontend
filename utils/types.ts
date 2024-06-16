@@ -149,3 +149,30 @@ export interface ApiResponse {
   why_choose_us: any[];
   testimonials: any[];
 }
+
+
+
+export interface OrderItem {
+  id: number;
+  order: number; // Order ID
+  drug: Drug;
+  quantity: number;
+  price: number;
+}
+
+export interface Order {
+  id: number;
+  user: User;
+  total_price: number;
+  address: string;
+  city: string;
+  postal_code: string;
+  country: string;
+  payment_method: 'card' | 'delivery' | 'eft';
+  status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled';
+  created_at: string;
+  updated_at: string;
+  drugs: Drug[];
+  invoice?: string;
+  items: OrderItem[];
+}
