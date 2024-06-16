@@ -5,15 +5,14 @@ import { Transition } from "@headlessui/react";
 // Define the Order and OrderItem types
 interface OrderItem {
   id: number;
-  product: {
-    name: string;
-  } | null; // Handle potential null values
+  drug_name: string; // Use drug_name instead of product.name
   quantity: number;
+  price: string;
 }
 
 interface Order {
   id: number;
-  user:string;
+  user:  string;
   total_price: number;
   status: string;
   created_at: string;
@@ -112,7 +111,7 @@ const OrderList: React.FC = () => {
           {orders.map((order) => (
             <tr key={order.id} className="border-b">
               <td className="px-4 py-2">{order.id}</td>
-              <td className="px-4 py-2">{order?.user}</td>
+              <td className="px-4 py-2">{order.user}</td>
               <td className="px-4 py-2">{order.total_price}</td>
               <td className="px-4 py-2">
                 <select
@@ -144,10 +143,10 @@ const OrderList: React.FC = () => {
       {viewingOrder && (
         <div className="mt-4">
           <h2 className="text-xl font-bold">Order Products</h2>
-          <ul className="list-disc ml-6">
+          <ul className="list-disc text-white ml-6">
             {viewingOrder.items.map((item) => (
               <li key={item.id}>
-                {item.product ? item.product.name : "Unknown Product"} - Quantity: {item.quantity}
+                {item.drug_name} - Quantity: {item.quantity} - Price: {item.price}
               </li>
             ))}
           </ul>
