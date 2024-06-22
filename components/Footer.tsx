@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
               Download our App
             </h4>
             <div className="flex space-x-4">
-              <Link href="https://play.google.com/store/apps/details?id=com.ludmil.kudyaclient">
+              <Link href="https://play.google.com/store/apps/details?id=com.ludmil.ClinicSystemMobile">
                 <span className="flex items-center space-x-2 hover:opacity-75 transition duration-300 cursor-pointer">
                   <Image
                     src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
